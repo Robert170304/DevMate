@@ -27,13 +27,11 @@
     border-radius: var(--mantine-radius-sm);
     text-decoration: none;
     color: var(--mantine-color-gray-7);
-
+    font-size: var(--mantine-font-size-sm);
+    font-weight: 500;
     @media (prefers-color-scheme: dark) {
       color: var(--mantine-color-dark-0);
     }
-    font-size: var(--mantine-font-size-sm);
-    font-weight: 500;
-
     // Pass the background color as an argument to the hover mixin
     @include hover(var(--mantine-color-gray-0));
 
