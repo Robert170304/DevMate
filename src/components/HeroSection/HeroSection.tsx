@@ -1,9 +1,24 @@
 'use client'
+import { useEffect } from "react";
 import { BackgroundImage, Box, Button, Center, Group, Title } from '@mantine/core';
 import './HeroSection.scss';
 import FeatureCards from '../FeatureCards/FeatureCards';
+import { usePathname, useSearchParams } from "next/navigation";
 
 const HeroSection: React.FC = () => {
+    const pathName = usePathname();
+    const searchParams = useSearchParams();
+
+    useEffect(() => {
+        const showFeatures = searchParams.get("features");
+        if (showFeatures === "true") {
+            const element = document.getElementById("features-section");
+            if (element) {
+                element.scrollIntoView({ behavior: "smooth" });
+            }
+            window.history.replaceState(null, "", "/");
+        }
+    }, [pathName, searchParams]);
     return (
         <div className="hero-inner">
             <div className="content">
