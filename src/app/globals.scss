@@ -1,21 +1,49 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+// globals.scss
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+// theme colors
+$theme-color-1: #0c090a;
+$theme-color-2: #ff6d00;
+$theme-color-3: #454545;
+$theme-color-4: #c9c0bb;
+$theme-color-5: #e66c2c;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
+// style colors
+$background-color: #0c090a;
+$text-color: #c9c0bb;
+$gray-border-1: #ffffff1f;
+
+// Spacing
+$spacing-md: 16px;
+$spacing-lg: 24px;
+
+// Fonts
+$primary-font-family: "Raleway", sans-serif;
+$font-size-sm: 14px;
+$font-size-md: 16px;
+
+// Border Radius
+$border-radius-sm: 8px;
 
 body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  color: $text-color;
+  background: $theme-color-1;
+  font-family: "Inter", sans-serif;
+}
+
+.layout-box {
+  display: flex;
+  flex-direction: column;
+}
+
+.layout-container {
+  overflow: scroll;
+  width: 100%;
+  max-width: none;
+}
+
+@mixin hover($hover-background) {
+  &:hover {
+    cursor: pointer;
+    background-color: $hover-background;
+  }
 }

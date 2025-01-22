@@ -1,0 +1,40 @@
+@use "./globals.scss" as *;
+
+.notFoundRoot {
+  padding: 80px 16px; // Adds side padding for smaller screens
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  @media (max-width: mantine.$mantine-breakpoint-md) {
+    padding: 60px 12px; // Adjust padding for medium screens
+  }
+
+  .title {
+    font-weight: 900;
+    font-size: 34px;
+    margin-bottom: var(--mantine-spacing-md);
+
+    @media (max-width: mantine.$mantine-breakpoint-sm) {
+      font-size: 28px; // Smaller font size for mobile
+    }
+  }
+
+  .control {
+    @media (max-width: mantine.$mantine-breakpoint-sm) {
+      width: 100%; // Full-width button on mobile
+    }
+  }
+
+  .mobileImage {
+    @media (min-width: 48em) {
+      display: none;
+    }
+  }
+
+  .desktopImage {
+    @media (max-width: 47.99em) {
+      display: none;
+    }
+  }
+}

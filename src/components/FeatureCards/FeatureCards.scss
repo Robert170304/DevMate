@@ -1,0 +1,51 @@
+@use "../../app/globals.scss" as *;
+
+.featuresSectionTitle {
+  font-size: 34px;
+  font-weight: 900;
+
+  @media (max-width: mantine.$mantine-breakpoint-sm) {
+    font-size: 24px;
+  }
+  @media (max-width: mantine.$mantine-breakpoint-xs) {
+    font-size: 18px;
+  }
+}
+
+.featuresSectionDescription {
+  max-width: 600px;
+  margin: auto;
+
+  &::after {
+    content: "";
+    display: block;
+    background-color: var(--mantine-color-blue-filled);
+    width: 45px;
+    height: 2px;
+    margin-top: var(--mantine-spacing-sm);
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+.featureCard {
+  border: 1px solid var(--mantine-color-gray-1);
+}
+
+.featureCardTitle {
+  @media (max-width: mantine.$mantine-breakpoint-sm) {
+    font-size: 24px;
+  }
+  &::after {
+    content: "";
+    display: block;
+    background-color: var(--mantine-color-blue-filled);
+    width: 45px;
+    height: 2px;
+    margin-top: var(--mantine-spacing-sm);
+  }
+}
+
+.featureSectionBadge {
+  background-color: $theme-color-5;
+}

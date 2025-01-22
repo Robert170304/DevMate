@@ -1,0 +1,89 @@
+// Header.scss
+@use "../../app/globals.scss" as *;
+
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 111;
+  height: 56px;
+  background-color: $theme-color-1;
+  padding-left: var(--mantine-spacing-md);
+  padding-right: var(--mantine-spacing-md);
+
+  &.scrolled {
+    border-bottom: 1px solid var(--mantine-color-dark-4);
+  }
+
+  .inner {
+    height: 56px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .link {
+    line-height: 1;
+    padding: 8px 12px;
+    border-radius: var(--mantine-radius-sm);
+    text-decoration: none;
+    color: var(--mantine-color-gray-7);
+
+    @media (prefers-color-scheme: dark) {
+      color: var(--mantine-color-dark-0);
+    }
+    font-size: var(--mantine-font-size-sm);
+    font-weight: 500;
+
+    // Pass the background color as an argument to the hover mixin
+    @include hover(var(--mantine-color-gray-0));
+
+    @media (prefers-color-scheme: dark) {
+      @include hover(var(--mantine-color-dark-6));
+    }
+  }
+
+  .app-name {
+    display: inline;
+    margin-bottom: 4px;
+    font-family: $primary-font-family;
+    color: $theme-color-2;
+    font-weight: 500;
+  }
+  .container-style {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .githubLoginBtn {
+    .mantine-Button-label {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 7px;
+    }
+    background-color: #24292e; // GitHub dark background
+    color: #ffffff; // White text color
+    border: none; // No border for a clean look
+    font-weight: 500; // Medium weight for better readability
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 16px; // Proper padding
+    gap: 8px; // Space between the icon and text
+    transition: background-color 0.3s;
+
+    &:hover {
+      background-color: #333; // Darker shade for hover effect
+    }
+
+    &:active {
+      background-color: #000; // Even darker for active click effect
+    }
+
+    span {
+      font-family: Raleway, sans-serif; // Your preferred font
+      font-size: 16px;
+    }
+  }
+}

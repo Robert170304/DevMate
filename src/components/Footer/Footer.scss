@@ -1,0 +1,33 @@
+// HeroSection.scss
+@use "../../app/globals.scss" as *;
+
+.footer {
+  margin-top: 50px;
+  border-top: 1px solid var(--footer-border-color);
+
+  @media (prefers-color-scheme: dark) {
+    --footer-border-color: var(--mantine-color-dark-5);
+  }
+
+  @media (prefers-color-scheme: light) {
+    --footer-border-color: var(--mantine-color-gray-2);
+  }
+}
+
+.footer-inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--mantine-spacing-md) var(--mantine-spacing-md);
+
+  // @media (max-width: mantine.$mantine-breakpoint-sm) {
+  //   flex-direction: column;
+  // }
+}
+
+.footer-links {
+  @media (max-width: mantine.$mantine-breakpoint-sm) {
+    margin-top: var(--mantine-spacing-lg);
+    margin-bottom: var(--mantine-spacing-sm);
+  }
+}
