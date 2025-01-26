@@ -36,7 +36,7 @@ const Header: React.FC = () => {
     ));
 
     return (
-        <header className={`header ${scrolled ? 'scrolled' : ''}`}>
+        <header className={`main-site__header ${scrolled ? 'scrolled' : ''}`}>
             <div className="inner">
                 <Flex gap={{ base: 'sm', md: 0 }} justify="center" align="center" wrap="nowrap" rowGap={0} columnGap={0} >
                     <Image mt="3px" h={35} w={35} src="/app-icon-non-bg.svg" alt="App Logo" className="app-logo" />

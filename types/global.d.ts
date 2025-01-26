@@ -1,6 +1,18 @@
 export { }; // Ensure this file is treated as a module
 
 declare global {
+    interface ExplorerFileGroupDTO {
+        id: string;
+        type: string;
+        name: string;
+        children?: ExplorerFileGroupDTO[];
+        content?: string;
+    }
+
+    type ExplorerItem =
+        | { id: string; name: string; type: 'file'; content: string; }
+        | { id: string; name: string; type: 'folder'; children: ExplorerItem[]; };
+
     interface SavedDraft {
         id?: number;
         title: string;

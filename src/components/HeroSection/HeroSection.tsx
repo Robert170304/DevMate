@@ -21,9 +21,9 @@ const HeroSection: React.FC = () => {
     }, [pathName, searchParams]);
     return (
         <div className="hero-inner">
-            <div className="content">
-                <Title className="title">
-                    Code, Collaborate, Create <br /> Together with <span className="highlight">AI</span>
+            <div className="hero-section__content">
+                <Title className="hero-section__title">
+                    Code, Collaborate, Create <br /> Together with <span className="hero-section__highlight">AI</span>
                 </Title>
                 {/* <Text c="dimmed" mt="md">
                         Build fully functional accessible web applications faster than ever – Mantine includes

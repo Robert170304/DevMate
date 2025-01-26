@@ -530,6 +530,11 @@
   resolved "https://registry.npmjs.org/@mantine/store/-/store-7.16.1.tgz#5bfac11854a26a1c7565fef9450b178327617a38"
   integrity sha512-EZjNzsLPWXB5MgBDa5FUEg5vbN+uo3hctSgplC7kkimjW7K3qfMiszwTt8cQgb7RRn7xH5sfC3U0Cm8X9h4kmA==
 
+"@mantinex/dev-icons@^1.1.0":
+  version "1.1.0"
+  resolved "https://registry.npmjs.org/@mantinex/dev-icons/-/dev-icons-1.1.0.tgz#021d1de43d7bc530b2a58e9493be36ad7567a855"
+  integrity sha512-ovve4xpjhBA29CIxwnTvIi6pJ7jWJftBFHiI2AAj79MGaVxteuj4o7G1j4gK0+b5U770vceXUVAKAwVBDTa5Aw==
+
 "@mantinex/mantine-logo@^1.1.0":
   version "1.1.0"
   resolved "https://registry.npmjs.org/@mantinex/mantine-logo/-/mantine-logo-1.1.0.tgz#0d010fdcfc3cd1bec7424ac4eeb26a09f3eab76d"
@@ -760,6 +765,11 @@
   version "0.0.29"
   resolved "https://registry.npmjs.org/@types/json5/-/json5-0.0.29.tgz#ee28707ae94e11d2b827bcbe5270bcea7f3e71ee"
   integrity sha512-dRLjCWHYg4oaA77cxO64oO+7JwCwnIzkZPdrrC71jQmQtlhM556pwKo5bUzqvZndkVbeFLIIi+9TC40JNF5hNQ==
+
+"@types/lodash@^4.17.14":
+  version "4.17.14"
+  resolved "https://registry.npmjs.org/@types/lodash/-/lodash-4.17.14.tgz#bafc053533f4cdc5fcc9635af46a963c1f3deaff"
+  integrity sha512-jsxagdikDiDBeIRaPYtArcT8my4tN1og7MtMRquFT3XNA6axxyHDRUemqDz/taRDdOUn0GnGHRCuff4q48sW9A==
 
 "@types/node@^20":
   version "20.17.14"
@@ -2557,6 +2567,11 @@ lodash.once@^4.0.0:
   version "4.1.1"
   resolved "https://registry.npmjs.org/lodash.once/-/lodash.once-4.1.1.tgz#0dd3971213c7c56df880977d504c88fb471a97ac"
   integrity sha512-Sb487aTOCr9drQVL8pIxOzVhafOjZN9UU54hiN8PU3uAiSV7lx1yYNpbNmex2PK6dSJoNTSJUUswT651yww3Mg==
+
+lodash@^4.17.21:
+  version "4.17.21"
+  resolved "https://registry.npmjs.org/lodash/-/lodash-4.17.21.tgz#679591c564c3bffaae8454cf0b3df370c3d6911c"
+  integrity sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==
 
 loose-envify@^1.4.0:
   version "1.4.0"

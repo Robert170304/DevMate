@@ -4,6 +4,7 @@ import { ScreenLoaderProvider } from "./context/ScreenLoaderContext";
 import NavigationAutoLoader from "@devmate/components/NavigationAutoLoader/NavigationAutoLoader";
 import { SessionProvider } from "next-auth/react";
 import { Session } from "next-auth";
+import { ContextMenuProvider } from "./context/ContextMenuContext";
 
 interface ProvidersProps {
     children: React.ReactNode;
@@ -14,15 +15,17 @@ export default function Providers({ children, session }: Readonly<ProvidersProps
 
     return (
         <SessionProvider session={session}>
-            <MantineProvider defaultColorScheme="dark" theme={{
-                fontFamily: 'Raleway, sans-serif',
-                headings: { fontFamily: 'Raleway, sans-serif' },
-            }} >
-                <ScreenLoaderProvider>
-                    <NavigationAutoLoader />
-                    {children}
-                </ScreenLoaderProvider>
-            </MantineProvider>
+            <ContextMenuProvider>
+                <MantineProvider defaultColorScheme="dark" theme={{
+                    fontFamily: 'Raleway, sans-serif',
+                    headings: { fontFamily: 'Raleway, sans-serif' },
+                }} >
+                    <ScreenLoaderProvider>
+                        <NavigationAutoLoader />
+                        {children}
+                    </ScreenLoaderProvider>
+                </MantineProvider>
+            </ContextMenuProvider>
         </SessionProvider>
     );
 }
