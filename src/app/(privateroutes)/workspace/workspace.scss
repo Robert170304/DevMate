@@ -1,0 +1,28 @@
+@use "../../globals.scss" as *;
+
+/* workspace.scss */
+.workspace-container {
+  display: flex;
+  flex: 1;
+  width: 100vw; /* Ensures no horizontal scrolling */
+  height: 100vh; /* Takes full viewport height */
+  overflow: hidden; /* Prevents content from causing horizontal scroll */
+
+  .explorer {
+    flex: 0 0 20.85%; /* Fixed to 20.85% width */
+    max-width: 20.85%; /* Ensures no overflow */
+    height: 100%; /* Fills height */
+    overflow-y: auto; /* Scrollable if content exceeds height */
+    border-right: 1px solid $gray-border-3;
+    ::-webkit-scrollbar {
+      display: none; /* Hides scrollbar */
+    }
+  }
+
+  .editor-view {
+    display: flex;
+    // flex: 0 0 79.15%; /* Fills remaining space (79.15%) */
+    height: 100%; /* Fills height */
+    overflow: hidden; /* Prevents accidental horizontal scroll */
+  }
+}

@@ -5,6 +5,11 @@ import FileIcon from '../FileIcon/FileIcon';
 import './ExplorerFileGroup.scss';
 import { useContextMenu } from '@devmate/app/context/ContextMenuContext';
 import GlobalContextMenu from '../FileContextMenu/GlobalContextMenu';
+import appActions from '@devmate/store/app/actions';
+import { useDispatch, useSelector } from 'react-redux';
+import type { RootState } from '@devmate/store/store';
+
+const { setCurrentFileData, setAllOpenFiles } = appActions;
 
 interface ExplorerFileGroupProps {
     item: ExplorerFileGroupDTO;
@@ -92,8 +97,11 @@ const ExplorerFileGroup: React.FC<ExplorerFileGroupProps> = ({
             action: () => deleteFileOrFolder(id)
         },
     ]
+    const dispatch = useDispatch();
+    const currentFileData = useSelector((state: RootState) => state.app.currentFileData);
+    const allOpenFiles = useSelector((state: RootState) => state.app.allOpenFiles);
     const { contextMenu, showContextMenuBtn, hideContextMenuBtn, isContextMenuBtnVisible } = useContextMenu();
-    const { name, type, children, id } = item;
+    const { name, type, children, id, content, path } = item;
     const [opened, setOpened] = useState(false);
     const [fileHoverId, setFileHoverId] = useState("");
     const [fileMenuActionName, setFileMenuActionName] = useState("");
@@ -125,7 +133,7 @@ const ExplorerFileGroup: React.FC<ExplorerFileGroupProps> = ({
         : null;
 
     const handleFolderClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-        if (fileMenuActionName === "Edit") return
+        if (fileMenuActionName === "Edit") return;
         e.stopPropagation(); // Prevent the click from bubbling up
         setOpened((prev) => !prev);
         setLastClickedId(id); // Update the last clicked folder ID
@@ -154,13 +162,21 @@ const ExplorerFileGroup: React.FC<ExplorerFileGroupProps> = ({
         setFileHoverId("")
     };
 
+    const onFileOpen = () => {
+        if (currentFileData.id === id) return;
+        dispatch(setCurrentFileData({ content, name, id, path }));
+        if (!allOpenFiles.find((file) => file.id === id)) {
+            dispatch(setAllOpenFiles([...allOpenFiles, { content, name, id, path }]));
+        }
+    };
+
     let folderIcon;
     if (name === "devmate") {
         folderIcon = <Image style={{ borderRadius: "50%" }} src="/app-logo.jpeg" alt="devmate logo" width={25} height={25} />;
     } else if (opened) {
-        folderIcon = <IconFolderOpen className="folder-collapse__chevron" stroke={1.5} size={16} />;
+        folderIcon = <IconFolderOpen className="folder-open__icon" stroke={1.5} size={16} />;
     } else {
-        folderIcon = <IconFolderFilled className="folder-collapse__chevron" stroke={1.5} size={16} />;
+        folderIcon = <IconFolderFilled className="folder-collapse__chevron folder-close__icon" stroke={1.5} size={16} />;
     }
 
     return (
@@ -265,7 +281,8 @@ const ExplorerFileGroup: React.FC<ExplorerFileGroupProps> = ({
                         variant="transparent"
                         color="dark"
                         radius="md"
-                        className="file-name__link"
+                        className={`file-name__link ${currentFileData.id === id ? "file-name__link_active" : ""}`}
+                        onClick={onFileOpen}
                     >
                         <FileIcon name={newName || name} />
                         {fileMenuActionName === "Edit" && editingFileId === id ?
@@ -279,7 +296,7 @@ const ExplorerFileGroup: React.FC<ExplorerFileGroupProps> = ({
                                 placeholder="Enter file name"
                                 defaultValue={name}
                             /> :
-                            <Text >{name}</Text>
+                            <Text>{name}</Text>
                         }
                     </Button>
                     {isContextMenuBtnVisible && fileHoverId === id &&

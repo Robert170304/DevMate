@@ -5,6 +5,10 @@ import NavigationAutoLoader from "@devmate/components/NavigationAutoLoader/Navig
 import { SessionProvider } from "next-auth/react";
 import { Session } from "next-auth";
 import { ContextMenuProvider } from "./context/ContextMenuContext";
+import { Provider as ReduxProvider } from 'react-redux'
+import { PersistGate } from "redux-persist/integration/react";
+import FullScreenLoader from "@devmate/components/LoaderFullScreen/LoaderFullScreen";
+import { persistor, store } from "@devmate/store/store";
 
 interface ProvidersProps {
     children: React.ReactNode;
@@ -22,7 +26,16 @@ export default function Providers({ children, session }: Readonly<ProvidersProps
                 }} >
                     <ScreenLoaderProvider>
                         <NavigationAutoLoader />
-                        {children}
+                        <ReduxProvider store={store}>
+                            <PersistGate
+                                loading={
+                                    <FullScreenLoader />
+                                }
+                                persistor={persistor}
+                            >
+                                {children}
+                            </PersistGate>
+                        </ReduxProvider>
                     </ScreenLoaderProvider>
                 </MantineProvider>
             </ContextMenuProvider>

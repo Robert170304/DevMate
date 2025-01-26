@@ -78,6 +78,10 @@ $border-color: var(--mantine-color-gray-3);
       min-height: auto;
     }
   }
+
+  &.file-name__link_active {
+    color: #c9c9c9;
+  }
 }
 
 .editing-file-name-input {

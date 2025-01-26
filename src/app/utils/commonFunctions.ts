@@ -14,3 +14,14 @@ export const copyToClipBoard = async (text: string) => {
     notify("Failed to copy!", { icon: "❌" });
   }
 };
+
+export const findFileOrFolderById = (data: ExplorerItem[], id: string): ExplorerItem | null => {
+  for (const item of data) {
+    if (item.id === id) return item;
+    if (item.type === 'folder') {
+      const foundInChildren = findFileOrFolderById(item.children, id);
+      if (foundInChildren) return foundInChildren;
+    }
+  }
+  return null;
+};

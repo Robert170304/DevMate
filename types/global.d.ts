@@ -7,11 +7,12 @@ declare global {
         name: string;
         children?: ExplorerFileGroupDTO[];
         content?: string;
+        path: string;
     }
 
     type ExplorerItem =
-        | { id: string; name: string; type: 'file'; content: string; }
-        | { id: string; name: string; type: 'folder'; children: ExplorerItem[]; };
+        | { id: string; name: string; type: 'file'; content: string; path: string; }
+        | { id: string; name: string; type: 'folder'; children: ExplorerItem[]; path: string; };
 
     interface SavedDraft {
         id?: number;

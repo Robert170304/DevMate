@@ -1,0 +1,16 @@
+.mantine-Breadcrumbs-root {
+  background: #1e1e1e;
+  .mantine-Breadcrumbs-separator {
+    margin: 0 5px;
+  }
+  .mantine-Text-root {
+    color: var(--mantine-color-gray-7);
+    font-size: 14px;
+  }
+}
+
+.breadcrumb-item {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+}

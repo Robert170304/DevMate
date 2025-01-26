@@ -1,0 +1,40 @@
+@use "../../app/globals.scss" as *;
+
+.mantine-Tabs-root {
+  width: inherit;
+  .mantine-Tabs-list {
+    border-bottom: 1px solid $gray-border-3;
+    overflow-x: scroll;
+    flex-wrap: nowrap;
+    scroll-behavior: smooth;
+  }
+  .mantine-Tabs-list::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.close-tab-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3px;
+  border: none;
+  background: none;
+  color: $gray-border-3;
+  cursor: pointer;
+  transition: color 200ms ease;
+  visibility: hidden;
+  &:hover {
+    color: $theme-color-4;
+    background: $gray-border-1;
+  }
+}
+
+.close-tab-button__visible {
+  visibility: visible;
+  border-radius: 4px;
+}
+
+.editor-view {
+  width: -webkit-fill-available;
+}
