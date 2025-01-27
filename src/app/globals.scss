@@ -3,9 +3,9 @@
 @use "./variables.scss" as *;
 
 body {
-  color: $text-color;
-  background: $theme-color-1;
-  font-family: "Inter", sans-serif;
+  color: $text-color !important;
+  background-color: $theme-color-1 !important;
+  font-family: "Raleway", sans-serif !important;
 }
 
 .layout-box {
