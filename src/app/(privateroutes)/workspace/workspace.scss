@@ -1,4 +1,4 @@
-@use "../../globals.scss" as *;
+@use "../../variables.scss" as *;
 
 /* workspace.scss */
 .workspace-container {
@@ -9,8 +9,7 @@
   overflow: hidden; /* Prevents content from causing horizontal scroll */
 
   .explorer {
-    flex: 0 0 20.85%; /* Fixed to 20.85% width */
-    max-width: 20.85%; /* Ensures no overflow */
+    flex: 0 0 21.85%; /* Fixed to 20.85% width */
     height: 100%; /* Fills height */
     overflow-y: auto; /* Scrollable if content exceeds height */
     border-right: 1px solid $gray-border-3;

@@ -1,4 +1,4 @@
-@use "../../app/globals.scss" as *;
+@use "../../app/variables.scss" as *;
 
 .mantine-Tabs-root {
   width: inherit;
@@ -7,6 +7,7 @@
     overflow-x: scroll;
     flex-wrap: nowrap;
     scroll-behavior: smooth;
+    background-color: $theme-color-1;
   }
   .mantine-Tabs-list::-webkit-scrollbar {
     display: none;

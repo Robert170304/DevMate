@@ -1,0 +1,34 @@
+// variables.scss
+
+// theme colors
+$theme-color-1: #0c090a;
+$theme-color-2: #ff6d00;
+$theme-color-3: #454545;
+$theme-color-4: #c9c0bb;
+$theme-color-5: #e66c2c;
+
+// style colors
+$background-color: #0c090a;
+$text-color: #c9c0bb;
+$gray-border-1: #ffffff1f;
+$gray-border-2: #ffffff2f;
+$gray-border-3: #ffffff3f;
+
+// Spacing
+$spacing-md: 16px;
+$spacing-lg: 24px;
+
+// Fonts
+$primary-font-family: "Raleway", sans-serif;
+$font-size-sm: 14px;
+$font-size-md: 16px;
+
+// Border Radius
+$border-radius-sm: 8px;
+
+@mixin hover($hover-background) {
+  &:hover {
+    cursor: pointer;
+    background-color: $hover-background;
+  }
+}
