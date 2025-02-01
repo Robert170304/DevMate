@@ -122,3 +122,29 @@ export const generateUUID = () => {
     return v.toString(16);
   });
 }
+
+// Helper function to collect all IDs of files inside a deleted folder
+export const collectFileIds = (data: ExplorerItem[], folderId: string): string[] => {
+  let ids: string[] = [];
+
+  for (const item of data) {
+    if (item.id === folderId) {
+      // Collect IDs of all nested files
+      const getIds = (folder: ExplorerItem): string[] => {
+        let nestedIds: string[] = [folder.id]; // Include the folder itself
+        if (folder.type === "folder") {
+          folder.children.forEach((child) => {
+            nestedIds = [...nestedIds, ...getIds(child)];
+          });
+        }
+        return nestedIds;
+      };
+
+      ids = getIds(item);
+      break;
+    } else if (item.type === "folder") {
+      ids = [...ids, ...collectFileIds(item.children, folderId)];
+    }
+  }
+  return ids;
+};

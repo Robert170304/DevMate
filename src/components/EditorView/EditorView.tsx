@@ -43,7 +43,7 @@ const EditorView = () => {
     };
 
     const handleContentChange = (value: string | undefined) => {
-        if (!currentFileData) return;
+        if (!currentFileData.id) return;
 
         const updatedCurrentFile = { ...currentFileData, content: value };
 
@@ -194,7 +194,7 @@ const EditorView = () => {
                     <Title order={3}>Open a file to start coding </Title>
                 </Flex>}
 
-            <Button
+            {currentFileData.id && <Button
                 h="35px"
                 variant="light"
                 color="gray"
@@ -209,7 +209,7 @@ const EditorView = () => {
             >
                 Run
                 <IconPlayerPlayFilled size={15} style={{ marginLeft: 10 }} />
-            </Button>
+            </Button>}
         </Flex>
     );
 }

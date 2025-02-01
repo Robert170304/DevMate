@@ -29,7 +29,7 @@ function getCommand(language: string, code: string): string {
         case "javascript":
             return `node ${tempFiles.javascript}`;
         case "typescript":
-            return `npx ts-node ${tempFiles.typescript}`;
+            return `npx tsx ${tempFiles.typescript}`;
         case "python":
             return `python3 ${tempFiles.python}`;
         case "cpp":
@@ -51,6 +51,7 @@ function getCommand(language: string, code: string): string {
         case "ruby":
             return `ruby ${tempFiles.ruby}`;
         case "php":
+            // not working
             return `php ${tempFiles.php}`;
         case "kotlin":
             // not working

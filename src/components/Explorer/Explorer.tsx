@@ -8,7 +8,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import type { RootState } from '@devmate/store/store';
 import appActions from '@devmate/store/app/actions';
 import './Explorer.scss';
-import { findFileOrFolderById, getFileDefaultContent, getFileExtension } from '@devmate/app/utils/commonFunctions';
+import { collectFileIds, findFileOrFolderById, getFileDefaultContent, getFileExtension } from '@devmate/app/utils/commonFunctions';
 
 const { setCurrentFileData, setAllOpenFiles, setFileTreeData } = appActions;
 
@@ -174,9 +174,9 @@ const Explorer: React.FC = () => {
         setEditingFileId(null); // Exit edit mode after updating
     };
 
-    const handleFileSwitch = (fileId: string) => {
-        const fileIndex = allOpenFiles.findIndex((f) => f.id === fileId);
-        const updatedFiles = allOpenFiles.filter((f) => f.id !== fileId);
+    const handleFileSwitch = (fileId: string, latestOpenFiles: { name: string, path: string, content: string | undefined, id: string }[]) => {
+        const fileIndex = latestOpenFiles.findIndex((f) => f.id === fileId);
+        const updatedFiles = latestOpenFiles.filter((f) => f.id !== fileId);
         let newCurrentFile = null;
 
         if (updatedFiles.length > 0) {
@@ -185,7 +185,6 @@ const Explorer: React.FC = () => {
                 : updatedFiles[fileIndex - 1] || updatedFiles[0];
         }
 
-        dispatch(setAllOpenFiles(updatedFiles));
         dispatch(setCurrentFileData(newCurrentFile || { name: '', path: '', content: undefined, id: '' }));
     }
 
@@ -205,20 +204,22 @@ const Explorer: React.FC = () => {
                 });
 
         if (fileTreeData) {
+            const fileIdsToDelete = collectFileIds(fileTreeData, id); // Get all file IDs in the folder
+
             // Dispatch the new file tree data without mutating the state
             const updatedData = deleteRecursively(fileTreeData);
             dispatch(setFileTreeData(updatedData));
 
-            // Check if the deleted item is the current file
-            if (currentFileData && currentFileData.id === id) {
-                handleFileSwitch(id);
-            } else {
-                // Remove the file from allOpenFiles if it's there
-                const updatedOpenFiles = allOpenFiles.filter((file) => file.id !== id);
-                dispatch(setAllOpenFiles(updatedOpenFiles));
-            }
+            // Remove all files inside the deleted folder from open files
+            const updatedOpenFiles = allOpenFiles.filter((file) => !fileIdsToDelete.includes(file.id));
+            dispatch(setAllOpenFiles(updatedOpenFiles));
 
+            // If the current file is deleted, switch to another file
+            if (currentFileData && fileIdsToDelete.includes(currentFileData.id)) {
+                handleFileSwitch(currentFileData.id, updatedOpenFiles);
+            }
         }
+        setLastClickedId(null);
     };
 
 
@@ -270,8 +271,7 @@ const Explorer: React.FC = () => {
             // If clicked inside the explorer-navbar__content, don't reset the ID
             return;
         }
-        setLastClickedId(null);
-        // setLastClickedId(null); // Reset ID only if click is outside the buttons
+        setLastClickedId(null); // Reset ID only if click is outside the buttons
     };
 
     return (
