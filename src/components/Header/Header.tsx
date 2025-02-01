@@ -54,7 +54,7 @@ const Header: React.FC = () => {
                             radius="md"
                             size="md"
                             className="githubLoginBtn"
-                            onClick={() => signIn("github", { callbackUrl: "/app" })}
+                            onClick={() => signIn("github", { callbackUrl: "/workspace" })}
                         >
                             <FaGithub size={16} />
                             <span>Login with GitHub</span>
