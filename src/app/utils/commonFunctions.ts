@@ -6,10 +6,12 @@ export const notify = (text: string, extraParams: ToastOptions) => {
   toast(text, { ...extraParams } as ToastOptions);
 };
 
-export const copyToClipBoard = async (text: string) => {
+export const copyToClipBoard = async (text: string, shouldNotify: boolean = false) => {
   try {
     await navigator.clipboard.writeText(text);
-    notify("Copied to clipboard.", { icon: "✅" });
+    if (shouldNotify) {
+      notify("Copied to clipboard.", { icon: "✅" });
+    }
   } catch (err) {
     console.error("🚀 ~ copyToClipBoard ~ err:", err);
     notify("Failed to copy!", { icon: "❌" });

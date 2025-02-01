@@ -1,121 +1,71 @@
-import { exec } from "child_process";
 import { NextResponse } from "next/server";
-import { writeFileSync, unlinkSync } from "fs";
-
-
-function getCommand(language: string, code: string): string {
-    const languageLowerCased = language.toLowerCase()
-    const tempDir = "/tmp"; // ✅ Use the writable directory
-    const tempFiles: { [key: string]: string } = {
-        javascript: `${tempDir}/temp.js`,
-        typescript: `${tempDir}/temp.ts`,
-        python: `${tempDir}/temp.py`,
-        cpp: `${tempDir}/temp.cpp`,
-        c: `${tempDir}/temp.c`,
-        java: `${tempDir}/Temp.java`,
-        go: `${tempDir}/temp.go`,
-        rust: `${tempDir}/temp.rs`,
-        csharp: `${tempDir}/temp.csx`,
-        swift: `${tempDir}/temp.swift`,
-        ruby: `${tempDir}/temp.rb`,
-        php: `${tempDir}/temp.php`,
-        kotlin: `${tempDir}/temp.kt`
-    };
-
-    if (tempFiles[languageLowerCased]) {
-        writeFileSync(tempFiles[languageLowerCased], code);
-    }
-    switch (languageLowerCased) {
-        case "javascript":
-            return `node ${tempFiles.javascript}`;
-        case "typescript":
-            return `npx tsx ${tempFiles.typescript}`;
-        case "python":
-            return `python3 ${tempFiles.python}`;
-        case "cpp":
-            return `g++ ${tempFiles.cpp} -o ${tempDir}/temp && ${tempDir}/temp`;
-        case "c":
-            return `gcc ${tempFiles.c} -o ${tempDir}/temp && ${tempDir}/temp`;
-        case "java":
-            return `javac ${tempFiles.java} && java -cp ${tempDir} Temp`;
-        case "go":
-            // not working
-            return `go run ${tempFiles.go}`;
-        case "rust":
-            return `rustc ${tempFiles.rust} -o ${tempDir}/temp && ${tempDir}/temp`;
-        case "csharp":
-            // not working
-            return `dotnet script ${tempFiles.csharp}`;
-        case "swift":
-            return `swift ${tempFiles.swift}`;
-        case "ruby":
-            return `ruby ${tempFiles.ruby}`;
-        case "php":
-            // not working
-            return `php ${tempFiles.php}`;
-        case "kotlin":
-            // not working
-            return `kotlinc ${tempFiles.kotlin} -include-runtime -d ${tempDir}/temp.jar && java -jar ${tempDir}/temp.jar`;
-        default:
-            return "";
-    }
-}
-
-
-function executeCommand(command: string): Promise<{ stdout: string; stderr: string }> {
-    return new Promise((resolve) => {
-        exec(command, (err, stdout, stderr) => {
-            if (err) {
-                // Include both error message and stderr for better debugging
-                const errorDetails = stderr || err.message;
-                return resolve({ stdout, stderr: errorDetails }); // Return errors gracefully
-            }
-            resolve({ stdout, stderr });
-        });
-    });
-}
 
 export async function POST(req: Request) {
-    const tempDir = "/tmp"; // ✅ Ensure cleanup in writable directory
-    const tempFiles = [
-        `${tempDir}/temp.js`, `${tempDir}/temp.ts`, `${tempDir}/temp.py`,
-        `${tempDir}/temp.cpp`, `${tempDir}/temp.c`, `${tempDir}/Temp.java`,
-        `${tempDir}/temp.go`, `${tempDir}/temp.rs`, `${tempDir}/temp.csx`,
-        `${tempDir}/temp.swift`, `${tempDir}/temp.rb`, `${tempDir}/temp.php`,
-        `${tempDir}/temp.kt`, `${tempDir}/temp.jar`, `${tempDir}/temp`
-    ];
     try {
         const body = await req.json();
-
         const { language, code } = body;
 
-        // Validate input
-        if (!language) {
+        if (!language || !code) {
             return NextResponse.json({ error: "Language and code are required", success: false }, { status: 400 });
         }
 
-        // Define the command based on language
-        const command = getCommand(language, code);
+        // Define language mappings for Piston API
+        const languageMap: { [key: string]: string } = {
+            javascript: "javascript",
+            typescript: "typescript",
+            python: "python",
+            cpp: "cpp",
+            c: "c",
+            java: "java",
+            go: "go",
+            rust: "rust",
+            csharp: "csharp",
+            swift: "swift",
+            ruby: "ruby",
+            php: "php",
+            kotlin: "kotlin"
+        };
 
-
-        if (!command) {
-            return NextResponse.json({ output: { stdout: "", stderr: "Access denied (unsupported code)" }, success: true }, { status: 400 });
+        const pistonLang = languageMap[language.toLowerCase()];
+        if (!pistonLang) {
+            return NextResponse.json({ error: "Unsupported language", success: false }, { status: 400 });
         }
-        // Execute the command
-        const { stdout, stderr } = await executeCommand(command);
+
+        // Call Piston API
+        const pistonResponse = await fetch("https://emkc.org/api/v2/piston/runtimes");
+        const runtimes = await pistonResponse.json();
+
+        // Get latest available version for the selected language
+        const selectedRuntime = runtimes.find((rt: { language: string }) => rt.language === pistonLang);
+        if (!selectedRuntime) {
+            return NextResponse.json({ error: "Unsupported language or runtime", success: false }, { status: 400 });
+        }
+
+        const pistonExecuteResponse = await fetch("https://emkc.org/api/v2/piston/execute", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                language: selectedRuntime.language,
+                version: selectedRuntime.version, // Get the latest available version dynamically
+                files: [{ name: `main.${language}`, content: code }]
+            })
+        });
+
+        const result = await pistonExecuteResponse.json();
+
 
         return NextResponse.json(
-            { output: { stdout: stdout.trim(), stderr: stderr.trim() }, success: true },
+            {
+                output: {
+                    stdout: result.run?.stdout.replace(/\n$/, "") || "",
+                    stderr: result.run?.stderr.replace(/\n$/, "") || "",
+                },
+                success: true
+            },
             { status: 200 }
         );
     } catch (error) {
-        // Catch any runtime or exec errors
         const errorMessage = error instanceof Error ? error.message : "Unexpected error occurred";
         return NextResponse.json({ error: errorMessage, success: false }, { status: 500 });
-    } finally {
-        // Clean up temporary files
-        tempFiles.forEach((file) => {
-            try { unlinkSync(file); } catch { }
-        });
     }
 }

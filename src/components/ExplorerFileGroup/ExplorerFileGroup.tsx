@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import type { RootState } from '@devmate/store/store';
 import { useContextMenu } from 'react-contexify';
 import ContextMenu from '../ContextMenu/ContextMenu';
+import { copyToClipBoard } from '@devmate/app/utils/commonFunctions';
 
 const { setCurrentFileData, setAllOpenFiles } = appActions;
 interface ExplorerFileGroupProps {
@@ -50,7 +51,7 @@ const ExplorerFileGroup: React.FC<ExplorerFileGroupProps> = ({
     const fileContextMenuItems = [
         {
             id: 'rename',
-            label: 'Rename',
+            label: 'Rename...',
             action: () => {
                 setFileMenuActionName('Edit')
                 setEditingFileId(id);
@@ -60,8 +61,21 @@ const ExplorerFileGroup: React.FC<ExplorerFileGroupProps> = ({
             id: 'delete',
             label: 'Delete',
             action: () => {
-                // setFileMenuActionName('Delete')
                 deleteFileOrFolder(id);
+            }
+        },
+        {
+            id: 'copy-name',
+            label: 'Copy',
+            action: () => {
+                copyToClipBoard(name)
+            }
+        },
+        {
+            id: 'copy-path',
+            label: 'Copy Path',
+            action: () => {
+                copyToClipBoard(path)
             }
         },
     ]
