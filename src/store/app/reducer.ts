@@ -6,12 +6,16 @@ const initialState: State = {
   currentFileData: { name: '', path: '', content: undefined, id: '' },
   allOpenFiles: [],
   fileTreeData: explorerData,
+  isTerminalPanelOpen: false,
+  outputPanelContent: [],
 };
 
 interface State {
   currentFileData: { name: string, path: string, content: string | undefined, id: string };
   allOpenFiles: { name: string, path: string, content: string | undefined, id: string }[];
   fileTreeData?: ExplorerItem[];
+  isTerminalPanelOpen: boolean;
+  outputPanelContent: { stdout: string, stderr: string, file: FileItemDTO, logId: string }[];
 }
 
 interface Action<T = unknown> {
@@ -37,6 +41,16 @@ const appReducer = (state: State = initialState, action: Action): State => {
       return {
         ...state,
         fileTreeData: (action.data as ExplorerItem[]) || {}, // Ensure compatibility with State
+      };
+    case actions.SET_IS_TERMINAL_OPEN:
+      return {
+        ...state,
+        isTerminalPanelOpen: action.data as boolean,
+      };
+    case actions.SET_OUTPUT_PANEL_CONTENT:
+      return {
+        ...state,
+        outputPanelContent: action.data as { stdout: string, stderr: string, file: FileItemDTO, logId: string }[],
       };
 
     default:

@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Raleway } from "next/font/google";
-import "./globals.scss";
-import '@mantine/core/styles.css';
 import { Session } from "next-auth";
 import { ColorSchemeScript, mantineHtmlProps } from '@mantine/core';
 import Providers from "./Providers";
 import SessionWatcher from "@devmate/components/SessionWatcher/SessionWatcher";
 import PageLayout from "./PageLayout";
+import "./globals.scss";
+import '@mantine/core/styles.css';
+import '@mantine/notifications/styles.css';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",

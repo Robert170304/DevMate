@@ -8,21 +8,32 @@ export default async function middleware(req: NextRequest) {
     const appURL = new URL("/workspace", req.nextUrl.origin);
 
     const publicRoutes = ["/", "/about-devmate"];
-    const protectedRoutes = ["/workspace"];
+    const protectedRoutes = ["/workspace", "/live-preview"];
+    const protectedApiRoutes = ["/api/runcode"]; // Define protected API routes
+
+    // Check if the request is an API call
+    const isApiRoute = url.startsWith("/api/");
+
+    // Check if the request is for a protected API route
+    const isProtectedApiRoute = protectedApiRoutes.some((route) => url.startsWith(route));
 
     // Handle logged-in user redirection
     if (sessionToken) {
-        if (publicRoutes.some((route) => url.startsWith(route))) {
-            // Prevent loop by only redirecting to /app if not already there
-            if (url !== appURL.pathname) {
-                return NextResponse.redirect(appURL);
-            }
+        // If logged in, prevent access to public routes and redirect to workspace
+        if (!isApiRoute && publicRoutes.includes(url)) {
+            return NextResponse.redirect(appURL);
         }
         // Allow user to stay on protected routes without unnecessary redirection
     } else {
         // Redirect unauthenticated users from protected routes to home
-        if (protectedRoutes.some((route) => url.startsWith(route))) {
+        if (!isApiRoute && protectedRoutes.includes(url)) {
             return NextResponse.redirect(homeURL);
+        }
+        if (isProtectedApiRoute) {
+            return new NextResponse(
+                JSON.stringify({ error: "Unauthorized: Please log in to access this route." }),
+                { status: 401, headers: { "Content-Type": "application/json" } }
+            );
         }
     }
 

@@ -1,19 +1,5 @@
 @use "../../app/variables.scss" as *;
 
-.mantine-Tabs-root {
-  width: inherit;
-  .mantine-Tabs-list {
-    border-bottom: 1px solid $gray-border-3;
-    overflow-x: scroll;
-    flex-wrap: nowrap;
-    scroll-behavior: smooth;
-    background-color: $theme-color-1;
-  }
-  .mantine-Tabs-list::-webkit-scrollbar {
-    display: none;
-  }
-}
-
 .close-tab-button {
   display: flex;
   align-items: center;
@@ -38,4 +24,18 @@
 
 .editor-view {
   width: -webkit-fill-available;
+  .mantine-Tabs-root {
+    width: inherit;
+    .mantine-Tabs-list {
+      width: 90%;
+      border-bottom: 1px solid $gray-border-3;
+      overflow-x: scroll;
+      flex-wrap: nowrap;
+      scroll-behavior: smooth;
+      background-color: $theme-color-1;
+    }
+    .mantine-Tabs-list::-webkit-scrollbar {
+      display: none;
+    }
+  }
 }

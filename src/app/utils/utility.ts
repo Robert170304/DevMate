@@ -1,5 +1,7 @@
 import { IconGitBranch, IconRobot, IconUsers } from '@tabler/icons-react';
 
+export const emptyFileObj: FileItemDTO = { type: "file", path: "", content: "", id: "", name: "" }
+
 export const allRoutes = [
   { path: "/", name: "home" },
   { path: "/about-devmate", name: "about" },
@@ -217,6 +219,7 @@ export const languageMap: { [key: string]: string } = {
   h: "cpp",
   hpp: "cpp",
   cs: "csharp",
+  csx: "csharp",
   go: "go",
   rs: "rust",
   dart: "dart",

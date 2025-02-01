@@ -3,14 +3,13 @@ import { IconChevronRight, IconFolderFilled, IconFolderOpen } from '@tabler/icon
 import { Box, Button, Collapse, Flex, Group, Image, Text, TextInput, UnstyledButton } from '@mantine/core';
 import FileIcon from '../FileIcon/FileIcon';
 import './ExplorerFileGroup.scss';
-import { useContextMenu } from '@devmate/app/context/ContextMenuContext';
-import GlobalContextMenu from '../FileContextMenu/GlobalContextMenu';
 import appActions from '@devmate/store/app/actions';
 import { useDispatch, useSelector } from 'react-redux';
 import type { RootState } from '@devmate/store/store';
+import { useContextMenu } from 'react-contexify';
+import ContextMenu from '../ContextMenu/ContextMenu';
 
 const { setCurrentFileData, setAllOpenFiles } = appActions;
-
 interface ExplorerFileGroupProps {
     item: ExplorerFileGroupDTO;
     lastClickedId: string | null;
@@ -44,6 +43,10 @@ const ExplorerFileGroup: React.FC<ExplorerFileGroupProps> = ({
     deleteFileOrFolder,
     newFileFolderName
 }) => {
+    const { name, type, children, id, content, path } = item;
+    const FILE_MENU_ID = `file_menu_${id}`
+    const FOLDER_MENU_ID = `folder_menu_${id}`
+
     const fileContextMenuItems = [
         {
             id: 'rename',
@@ -66,9 +69,7 @@ const ExplorerFileGroup: React.FC<ExplorerFileGroupProps> = ({
         {
             id: 'new_file',
             label: 'New File',
-            action: (e: React.MouseEvent<HTMLButtonElement>) => {
-                e.stopPropagation();
-                e.preventDefault();
+            action: () => {
                 setLastClickedId(id)
                 handleAddFile(id)
             }
@@ -76,9 +77,7 @@ const ExplorerFileGroup: React.FC<ExplorerFileGroupProps> = ({
         {
             id: 'new_folder',
             label: 'New Folder',
-            action: (e: React.MouseEvent<HTMLButtonElement>) => {
-                e.stopPropagation();
-                e.preventDefault();
+            action: () => {
                 setLastClickedId(id)
                 handleAddFolder(id)
             }
@@ -100,12 +99,12 @@ const ExplorerFileGroup: React.FC<ExplorerFileGroupProps> = ({
     const dispatch = useDispatch();
     const currentFileData = useSelector((state: RootState) => state.app.currentFileData);
     const allOpenFiles = useSelector((state: RootState) => state.app.allOpenFiles);
-    const { contextMenu, showContextMenuBtn, hideContextMenuBtn, isContextMenuBtnVisible } = useContextMenu();
-    const { name, type, children, id, content, path } = item;
     const [opened, setOpened] = useState(false);
-    const [fileHoverId, setFileHoverId] = useState("");
+    // const [fileHoverId, setFileHoverId] = useState("");
     const [fileMenuActionName, setFileMenuActionName] = useState("");
     const [newName, setNewName] = useState(name);
+    const fileContextMenu = useContextMenu({ id: FILE_MENU_ID });
+    const folderContextMenu = useContextMenu({ id: FOLDER_MENU_ID });
 
     // Check if the current group has nested children
     const hasChildren = Array.isArray(children) && children.length > 0;
@@ -142,11 +141,9 @@ const ExplorerFileGroup: React.FC<ExplorerFileGroupProps> = ({
     const handleFileNameSave = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === 'Enter' && newName.trim()) {
             updateFileOrFolderName(id, newName.trim());
-            setFileHoverId("")
             setFileMenuActionName("")
         } else if (e.key === 'Escape') {
             setEditingFileId(null); // Cancel editing
-            setFileHoverId("")
             setFileMenuActionName("")
         }
 
@@ -159,7 +156,6 @@ const ExplorerFileGroup: React.FC<ExplorerFileGroupProps> = ({
             setEditingFileId(null); // Cancel editing
         }
         setFileMenuActionName("")
-        setFileHoverId("")
     };
 
     const onFileOpen = () => {
@@ -179,22 +175,21 @@ const ExplorerFileGroup: React.FC<ExplorerFileGroupProps> = ({
         folderIcon = <IconFolderFilled className="folder-collapse__chevron folder-close__icon" stroke={1.5} size={16} />;
     }
 
+    function handleContextMenu(event: React.MouseEvent, menuId: string) {
+        event.preventDefault(); // Prevent default right-click behavior
+
+        if (menuId === FILE_MENU_ID) {
+            fileContextMenu.show({ event });
+        } else {
+            folderContextMenu.show({ event });
+        }
+    }
+
     return (
         <div className="files-group" >
             {type === 'folder' ? (
                 <>
-                    <Flex pos="relative" display="flex" align="center" gap="xs"
-                        onMouseOver={() => {
-                            setFileHoverId(id)
-                            showContextMenuBtn()
-                        }}
-                        onMouseLeave={() => {
-                            if (!contextMenu.visible) {
-                                hideContextMenuBtn()
-                                setFileHoverId("")
-                            }
-                        }}
-                    >
+                    <Flex pos="relative" display="flex" align="center" gap="xs" onContextMenu={(e) => handleContextMenu(e, FOLDER_MENU_ID)}>
                         <UnstyledButton
                             className={`folder-collapse___control ${opened ? "folder-collapse__control_open" : ""} ${lastClickedId === id ? "folder-collapse__active" : ""}`}
                             onClick={handleFolderClick}
@@ -225,20 +220,6 @@ const ExplorerFileGroup: React.FC<ExplorerFileGroupProps> = ({
                                 />
                             </Group>
                         </UnstyledButton>
-                        <Box className='folder-context-menu-btn' >
-                            {isContextMenuBtnVisible && fileHoverId === id && fileMenuActionName !== "Edit" &&
-                                <GlobalContextMenu
-                                    onContextMenuHide={() => {
-                                        setFileHoverId("")
-                                        hideContextMenuBtn()
-                                    }}
-                                    onContextMenuOpen={() => {
-                                        setLastClickedId(id)
-                                    }}
-                                    items={folderContextMenuItems}
-                                />
-                            }
-                        </Box>
                     </Flex>
                     {creatingItem && creatingItem.parentId === id && (
                         <div className="creating-file-input__container">
@@ -266,16 +247,6 @@ const ExplorerFileGroup: React.FC<ExplorerFileGroupProps> = ({
                 </>
             ) : (
                 <Flex display="flex" align="center" gap="xs"
-                    onMouseOver={() => {
-                        setFileHoverId(id)
-                        showContextMenuBtn()
-                    }}
-                    onMouseLeave={() => {
-                        if (!contextMenu.visible) {
-                            hideContextMenuBtn()
-                            setFileHoverId("")
-                        }
-                    }}
                 >
                     <Button
                         variant="transparent"
@@ -283,6 +254,7 @@ const ExplorerFileGroup: React.FC<ExplorerFileGroupProps> = ({
                         radius="md"
                         className={`file-name__link ${currentFileData.id === id ? "file-name__link_active" : ""}`}
                         onClick={onFileOpen}
+                        onContextMenu={(e) => handleContextMenu(e, FILE_MENU_ID)}
                     >
                         <FileIcon name={newName || name} />
                         {fileMenuActionName === "Edit" && editingFileId === id ?
@@ -299,17 +271,12 @@ const ExplorerFileGroup: React.FC<ExplorerFileGroupProps> = ({
                             <Text>{name}</Text>
                         }
                     </Button>
-                    {isContextMenuBtnVisible && fileHoverId === id &&
-                        <GlobalContextMenu
-                            onContextMenuHide={() => {
-                                setFileHoverId("")
-                                hideContextMenuBtn()
-                            }}
-                            items={fileContextMenuItems}
-                        />
-                    }
                 </Flex>
             )}
+            <ContextMenu
+                items={type === 'folder' ? folderContextMenuItems : fileContextMenuItems}
+                menuId={type === 'folder' ? FOLDER_MENU_ID : FILE_MENU_ID}
+            />
         </div>
     );
 };

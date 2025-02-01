@@ -8,7 +8,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import type { RootState } from '@devmate/store/store';
 import appActions from '@devmate/store/app/actions';
 import './Explorer.scss';
-import { findFileOrFolderById } from '@devmate/app/utils/commonFunctions';
+import { findFileOrFolderById, getFileDefaultContent, getFileExtension } from '@devmate/app/utils/commonFunctions';
 
 const { setCurrentFileData, setAllOpenFiles, setFileTreeData } = appActions;
 
@@ -41,7 +41,7 @@ const Explorer: React.FC = () => {
                 id: `${Date.now()}`,
                 name: name || `New File ${Date.now()}.txt`,
                 type: 'file',
-                content: '// New file content',
+                content: getFileDefaultContent(getFileExtension(name)),
                 path: parentId ? '' : name || `New File ${Date.now()}.txt`, // Temporary placeholder
             }
             : {

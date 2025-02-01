@@ -26,7 +26,7 @@ const FilePathBreadCrumb = () => {
     return (
         <Breadcrumbs
             separator={<IconChevronRight size={15} />}
-            separatorMargin="md"
+            separatorMargin="sm"
             p="5px"
             className="file-path-breadcrumb"
         >

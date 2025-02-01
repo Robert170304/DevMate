@@ -1,4 +1,4 @@
-import { Flex, Image, Tabs, Title } from '@mantine/core';
+import { Button, Flex, Image, Tabs, Title } from '@mantine/core';
 import classes from "./EditorViewTabs.module.scss"
 import EditorComponent from '../EditorComponent/EditorComponent';
 import React, { useState } from 'react';
@@ -7,19 +7,23 @@ import { useDispatch, useSelector } from 'react-redux';
 import { isEmpty } from 'lodash';
 import FileIcon from '../FileIcon/FileIcon';
 import appActions from '@devmate/store/app/actions';
-import { IconX } from '@tabler/icons-react';
+import { IconPlayerPlayFilled, IconX } from '@tabler/icons-react';
 import "./EditorView.scss"
 import { languageMap } from '@devmate/app/utils/utility';
 import FilePathBreadCrumb from '../FilePathBreadCrumb/FilePathBreadCrumb';
+import { generateUUID, showNotification } from '@devmate/app/utils/commonFunctions';
 
-const { setCurrentFileData, setAllOpenFiles, setFileTreeData } = appActions;
+const { setCurrentFileData, setAllOpenFiles, setFileTreeData, setIsTerminalOpen, setOutputPanelContent } = appActions;
 
 const EditorView = () => {
+
     const dispatch = useDispatch();
     const currentFileData = useSelector((state: RootState) => state.app.currentFileData);
     const fileTreeData = useSelector((state: RootState) => state.app.fileTreeData);
     const allOpenFiles = useSelector((state: RootState) => state.app.allOpenFiles);
+    const outputPanelContent = useSelector((state: RootState) => state.app.outputPanelContent);
     const [hoverTabId, setHoverTabId] = useState("");
+    const [runCodeLoading, setRunCodeLoading] = useState(false);
 
     const getLanguageFromExtension = (filePath: string) => {
         const extension = filePath.split(".").pop();
@@ -27,7 +31,7 @@ const EditorView = () => {
         return fileExtension
     };
 
-    const updateFileTreeContent = (tree: ExplorerItem[], fileId: string, newContent: string): ExplorerItem[] => {
+    const updateFileTreeContent = (tree: ExplorerItem[], fileId: string, newContent: string | ""): ExplorerItem[] => {
         return tree.map((node) => {
             if (node.id === fileId) {
                 return { ...node, content: newContent };
@@ -39,7 +43,7 @@ const EditorView = () => {
     };
 
     const handleContentChange = (value: string | undefined) => {
-        if (!currentFileData || !value) return;
+        if (!currentFileData) return;
 
         const updatedCurrentFile = { ...currentFileData, content: value };
 
@@ -54,7 +58,7 @@ const EditorView = () => {
 
         // Update fileTreeData
         if (fileTreeData) {
-            const updatedFileTreeData = updateFileTreeContent(fileTreeData, currentFileData.id, value);
+            const updatedFileTreeData = updateFileTreeContent(fileTreeData, currentFileData.id, value ?? "");
             dispatch(setFileTreeData(updatedFileTreeData));
         }
     };
@@ -76,6 +80,40 @@ const EditorView = () => {
         dispatch(setAllOpenFiles(updatedFiles));
         dispatch(setCurrentFileData(newCurrentFile || { name: '', path: '', content: undefined, id: '' }));
     }
+
+    const handleRunCode = async () => {
+        if (currentFileData.name.includes(".html")) {
+            window.open(`/live-preview/${currentFileData.id}`, "_blank");
+        } else {
+            setRunCodeLoading(true);
+            try {
+                const res = await fetch("/api/runcode", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        language: getLanguageFromExtension(currentFileData?.path || ""),
+                        code: currentFileData?.content ?? "",
+                    }),
+                });
+                const data = await res.json();
+
+                if (!data.success) {
+                    showNotification({ title: "Error", message: data?.error || "Something went wrong" });
+                } else {
+                    dispatch(setOutputPanelContent([...outputPanelContent, { ...data.output, file: currentFileData, logId: generateUUID() }]));
+                    dispatch(setIsTerminalOpen(true));
+                    setRunCodeLoading(false);
+                }
+                setRunCodeLoading(false);
+            } catch (error) {
+                setRunCodeLoading(false);
+                console.error("Error running code:", error);
+            }
+        }
+    };
+
 
 
     return (
@@ -155,6 +193,23 @@ const EditorView = () => {
                     </div>
                     <Title order={3}>Open a file to start coding </Title>
                 </Flex>}
+
+            <Button
+                h="35px"
+                variant="light"
+                color="gray"
+                size="sm"
+                className="run-button"
+                pos="absolute"
+                right="6px"
+                top="4px"
+                onClick={() => handleRunCode()}
+                loading={runCodeLoading}
+                loaderProps={{ color: "gray" }}
+            >
+                Run
+                <IconPlayerPlayFilled size={15} style={{ marginLeft: 10 }} />
+            </Button>
         </Flex>
     );
 }

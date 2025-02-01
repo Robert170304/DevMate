@@ -1,0 +1,47 @@
+@use "../../app/variables.scss" as *;
+
+.terminal_header {
+  position: absolute;
+  top: 5px;
+  right: 0;
+  padding: 0 10px;
+  justify-content: space-between;
+  display: flex;
+  .terminal_header__title {
+    display: flex;
+    align-items: center;
+    color: #fff;
+  }
+  .terminal_header__actions {
+    display: flex;
+    align-items: center;
+    .terminal_header__action {
+      margin-left: 10px;
+      cursor: pointer;
+      color: #fff;
+    }
+  }
+}
+
+.terminal-section-content {
+  height: -webkit-fill-available;
+  .logs {
+    font-family: "Inconsolata", monospace;
+    font-size: 12px;
+    overflow-y: auto;
+    color: #fff;
+  }
+  padding: 0 10px;
+  .mantine-Tabs-root {
+    height: inherit;
+    .mantine-Tabs-panel {
+      overflow: scroll;
+      height: inherit;
+      height: 87%;
+    }
+  }
+}
+
+.react-contextmenu-wrapper {
+  height: 100%;
+}

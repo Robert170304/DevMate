@@ -1,0 +1,21 @@
+.commandPanel_container {
+  width: 100%;
+  .terminal.xterm.xterm-dom-renderer-owner-2 {
+    height: -webkit-fill-available;
+    width: 100% !important;
+    .xterm-scroll-area {
+      height: -webkit-fill-available;
+    }
+    .xterm-screen {
+      height: inherit !important;
+      width: 100% !important;
+      .xterm-rows {
+        width: 100%;
+        height: inherit;
+        overflow: auto;
+        font-family: "Inconsolata", monospace;
+        font-size: 12px;
+      }
+    }
+  }
+}

@@ -4,9 +4,9 @@ import { ScreenLoaderProvider } from "./context/ScreenLoaderContext";
 import NavigationAutoLoader from "@devmate/components/NavigationAutoLoader/NavigationAutoLoader";
 import { SessionProvider } from "next-auth/react";
 import { Session } from "next-auth";
-import { ContextMenuProvider } from "./context/ContextMenuContext";
 import { Provider as ReduxProvider } from 'react-redux'
 import { PersistGate } from "redux-persist/integration/react";
+import { Notifications } from '@mantine/notifications';
 import FullScreenLoader from "@devmate/components/LoaderFullScreen/LoaderFullScreen";
 import { persistor, store } from "@devmate/store/store";
 
@@ -19,26 +19,25 @@ export default function Providers({ children, session }: Readonly<ProvidersProps
 
     return (
         <SessionProvider session={session}>
-            <ContextMenuProvider>
-                <MantineProvider defaultColorScheme="dark" theme={{
-                    fontFamily: 'Raleway, sans-serif',
-                    headings: { fontFamily: 'Raleway, sans-serif' },
-                }} >
-                    <ScreenLoaderProvider>
-                        <NavigationAutoLoader />
-                        <ReduxProvider store={store}>
-                            <PersistGate
-                                loading={
-                                    <FullScreenLoader />
-                                }
-                                persistor={persistor}
-                            >
-                                {children}
-                            </PersistGate>
-                        </ReduxProvider>
-                    </ScreenLoaderProvider>
-                </MantineProvider>
-            </ContextMenuProvider>
+            <MantineProvider defaultColorScheme="dark" theme={{
+                fontFamily: 'Raleway, sans-serif',
+                headings: { fontFamily: 'Raleway, sans-serif' },
+            }} >
+                <Notifications />
+                <ScreenLoaderProvider>
+                    <NavigationAutoLoader />
+                    <ReduxProvider store={store}>
+                        <PersistGate
+                            loading={
+                                <FullScreenLoader />
+                            }
+                            persistor={persistor}
+                        >
+                            {children}
+                        </PersistGate>
+                    </ReduxProvider>
+                </ScreenLoaderProvider>
+            </MantineProvider>
         </SessionProvider>
     );
 }

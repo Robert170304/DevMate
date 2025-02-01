@@ -1,6 +1,24 @@
 export { }; // Ensure this file is treated as a module
 
 declare global {
+    interface OutputProps {
+        stdout?: string;
+        stderr?: string;
+    }
+    interface MTNotificationProps {
+        id?: string;
+        title?: string;
+        message?: string;
+        position?: "top-right" | "top-left" | "bottom-right" | "bottom-left";
+        withCloseButton?: boolean;
+        onClose?: () => void;
+        onOpen?: () => void;
+        autoClose?: number | boolean;
+        color?: string;
+        className?: string;
+        style?: React.CSSProperties;
+        loading?: boolean;
+    }
     interface ExplorerFileGroupDTO {
         id: string;
         type: string;
@@ -11,8 +29,12 @@ declare global {
     }
 
     type ExplorerItem =
-        | { id: string; name: string; type: 'file'; content: string; path: string; }
+        { id: string; name: string; type: 'file'; content: string; path: string; }
         | { id: string; name: string; type: 'folder'; children: ExplorerItem[]; path: string; };
+
+    type FolderItemDTO = { id: string; name: string; type: 'folder'; children: ExplorerItem[]; path: string; };
+
+    type FileItemDTO = { id: string; name: string; type: 'file'; content: string; path: string; }
 
     interface SavedDraft {
         id?: number;
