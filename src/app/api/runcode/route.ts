@@ -5,53 +5,56 @@ import { writeFileSync, unlinkSync } from "fs";
 
 function getCommand(language: string, code: string): string {
     const languageLowerCased = language.toLowerCase()
+    const tempDir = "/tmp"; // ✅ Use the writable directory
     const tempFiles: { [key: string]: string } = {
-        javascript: "temp.js",
-        typescript: "temp.ts",
-        python: "temp.py",
-        cpp: "temp.cpp",
-        c: "temp.c",
-        java: "Temp.java",
-        go: "temp.go",
-        rust: "temp.rs",
-        csharp: "temp.csx",
-        swift: "temp.swift",
-        ruby: "temp.rb",
-        php: "temp.php",
-        kotlin: "temp.kt"
+        javascript: `${tempDir}/temp.js`,
+        typescript: `${tempDir}/temp.ts`,
+        python: `${tempDir}/temp.py`,
+        cpp: `${tempDir}/temp.cpp`,
+        c: `${tempDir}/temp.c`,
+        java: `${tempDir}/Temp.java`,
+        go: `${tempDir}/temp.go`,
+        rust: `${tempDir}/temp.rs`,
+        csharp: `${tempDir}/temp.csx`,
+        swift: `${tempDir}/temp.swift`,
+        ruby: `${tempDir}/temp.rb`,
+        php: `${tempDir}/temp.php`,
+        kotlin: `${tempDir}/temp.kt`
     };
+
     if (tempFiles[languageLowerCased]) {
         writeFileSync(tempFiles[languageLowerCased], code);
     }
     switch (languageLowerCased) {
         case "javascript":
-            return `node temp.js`;
+            return `node ${tempFiles.javascript}`;
         case "typescript":
-            return `npx ts-node temp.ts`;
+            return `npx ts-node ${tempFiles.typescript}`;
         case "python":
-            return `python3 temp.py`;
+            return `python3 ${tempFiles.python}`;
         case "cpp":
-            return `g++ temp.cpp -o temp && ./temp`;
+            return `g++ ${tempFiles.cpp} -o ${tempDir}/temp && ${tempDir}/temp`;
         case "c":
-            return `gcc temp.c -o temp && ./temp`;
+            return `gcc ${tempFiles.c} -o ${tempDir}/temp && ${tempDir}/temp`;
         case "java":
-            return `javac Temp.java && java Temp`;
+            return `javac ${tempFiles.java} && java -cp ${tempDir} Temp`;
         case "go":
             // not working
-            return `go run temp.go`;
+            return `go run ${tempFiles.go}`;
         case "rust":
-            return `rustc temp.rs -o temp && ./temp`;
+            return `rustc ${tempFiles.rust} -o ${tempDir}/temp && ${tempDir}/temp`;
         case "csharp":
             // not working
-            return `dotnet script temp.csx`;
+            return `dotnet script ${tempFiles.csharp}`;
         case "swift":
-            return `swift temp.swift`;
+            return `swift ${tempFiles.swift}`;
         case "ruby":
-            return `ruby temp.rb`;
+            return `ruby ${tempFiles.ruby}`;
         case "php":
-            return `php temp.php`;
+            return `php ${tempFiles.php}`;
         case "kotlin":
-            return `kotlinc temp.kt -include-runtime -d temp.jar && java -jar temp.jar`;
+            // not working
+            return `kotlinc ${tempFiles.kotlin} -include-runtime -d ${tempDir}/temp.jar && java -jar ${tempDir}/temp.jar`;
         default:
             return "";
     }
@@ -72,9 +75,13 @@ function executeCommand(command: string): Promise<{ stdout: string; stderr: stri
 }
 
 export async function POST(req: Request) {
+    const tempDir = "/tmp"; // ✅ Ensure cleanup in writable directory
     const tempFiles = [
-        "temp.js", "temp.ts", "temp.py", "temp.cpp", "temp.c", "Temp.java",
-        "temp.go", "temp.rs", "temp.csx", "temp.swift", "temp.rb", "temp.php", "temp.kt", "temp.jar"
+        `${tempDir}/temp.js`, `${tempDir}/temp.ts`, `${tempDir}/temp.py`,
+        `${tempDir}/temp.cpp`, `${tempDir}/temp.c`, `${tempDir}/Temp.java`,
+        `${tempDir}/temp.go`, `${tempDir}/temp.rs`, `${tempDir}/temp.csx`,
+        `${tempDir}/temp.swift`, `${tempDir}/temp.rb`, `${tempDir}/temp.php`,
+        `${tempDir}/temp.kt`, `${tempDir}/temp.jar`, `${tempDir}/temp`
     ];
     try {
         const body = await req.json();
