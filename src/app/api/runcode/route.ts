@@ -14,7 +14,7 @@ export async function POST(req: Request) {
             javascript: "javascript",
             typescript: "typescript",
             python: "python",
-            cpp: "cpp",
+            cpp: "c++",
             c: "c",
             java: "java",
             go: "go",
