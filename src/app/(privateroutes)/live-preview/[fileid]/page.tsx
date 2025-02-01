@@ -52,7 +52,7 @@ const LivePreview = () => {
             console.log("🚀 ~ linkTags.forEach ~ cssFile:", cssFile)
             if (cssFile && cssFile.type === "file") {
                 const styleTag = doc.createElement("style");
-                styleTag.innerHTML = cssFile.content;
+                styleTag.innerHTML = cssFile.content ?? "";
                 doc.head.appendChild(styleTag);
                 link.remove(); // Remove the original <link> to prevent 404 errors
             }
@@ -73,7 +73,7 @@ const LivePreview = () => {
             if (jsFile && jsFile.type === "file") {
                 console.log("🚀 ~ scriptTags.forEach ~ jsFile:", jsFile)
                 const scriptTag = doc.createElement("script");
-                scriptTag.innerHTML = jsFile.content;
+                scriptTag.innerHTML = jsFile.content ?? "";
                 scriptTag.defer = true;
                 doc.body.appendChild(scriptTag);
                 script.remove(); // Remove the original <script> to prevent 404 errors
@@ -86,13 +86,15 @@ const LivePreview = () => {
     }, [currentHTMLFile, fileTreeData]);
 
 
-    return (
-        <iframe
-            ref={iframeRef}
-            title="Live Preview"
-            sandbox="allow-scripts allow-same-origin"
-            className="live-preview-frame"
-        />
+    return (<>
+        {
+            currentHTMLFile ? <iframe
+                ref={iframeRef}
+                title="Live Preview"
+                sandbox="allow-scripts allow-same-origin"
+                className="live-preview-frame"
+            /> : <div>This HTML file doesnt exist</div>}
+    </>
     );
 };
 

@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { IconChevronRight, IconFolderFilled, IconFolderOpen } from '@tabler/icons-react';
-import { Box, Button, Collapse, Flex, Group, Image, Text, TextInput, UnstyledButton } from '@mantine/core';
+import { Box, Button, Collapse, Flex, Group, Image, Popover, Text, TextInput, UnstyledButton } from '@mantine/core';
 import FileIcon from '../FileIcon/FileIcon';
 import './ExplorerFileGroup.scss';
 import appActions from '@devmate/store/app/actions';
@@ -12,6 +12,8 @@ import { copyToClipBoard } from '@devmate/app/utils/commonFunctions';
 
 const { setCurrentFileData, setAllOpenFiles } = appActions;
 interface ExplorerFileGroupProps {
+    isDuplicateDetected: { detected: boolean; duplicateName: string; };
+    setIsDuplicateDetected: (params: { detected: boolean; duplicateName: string; }) => void;
     item: ExplorerFileGroupDTO;
     lastClickedId: string | null;
     editingFileId: string | null;
@@ -19,13 +21,13 @@ interface ExplorerFileGroupProps {
     deleteFileOrFolder: (id: string) => void;
     setEditingFileId: (id: string | null) => void;
     newFileFolderName: string;
-    updateFileOrFolderName: (id: string, newName: string) => void;
-    creatingItem: { parentId: string | null; type: 'file' | 'folder' } | null;
-    handleAddFile: (parentId?: string | null) => void;
-    handleAddFolder: (parentId?: string | null) => void;
+    updateFileOrFolderName: (parentId: string, id: string, newName: string) => void;
+    creatingItem: { parentId: string; type: string };
+    handleAddFile: (parentId?: string) => void;
+    handleAddFolder: (parentId?: string) => void;
     onNameInputBlur: () => void;
     onNameInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-    onNameInput: (e: React.KeyboardEvent<HTMLInputElement>, parentId: string | null, isFile: boolean) => void;
+    onNameInput: (e: React.KeyboardEvent<HTMLInputElement>, parentId: string, isFile: boolean) => void;
 }
 
 const ExplorerFileGroup: React.FC<ExplorerFileGroupProps> = ({
@@ -42,9 +44,11 @@ const ExplorerFileGroup: React.FC<ExplorerFileGroupProps> = ({
     handleAddFile,
     handleAddFolder,
     deleteFileOrFolder,
-    newFileFolderName
+    newFileFolderName,
+    isDuplicateDetected,
+    setIsDuplicateDetected
 }) => {
-    const { name, type, children, id, content, path } = item;
+    const { name, type, children, id, content, path, parentId } = item;
     const FILE_MENU_ID = `file_menu_${id}`
     const FOLDER_MENU_ID = `folder_menu_${id}`
 
@@ -82,7 +86,7 @@ const ExplorerFileGroup: React.FC<ExplorerFileGroupProps> = ({
     const folderContextMenuItems = [
         {
             id: 'new_file',
-            label: 'New File',
+            label: 'New File...',
             action: () => {
                 setLastClickedId(id)
                 handleAddFile(id)
@@ -90,7 +94,7 @@ const ExplorerFileGroup: React.FC<ExplorerFileGroupProps> = ({
         },
         {
             id: 'new_folder',
-            label: 'New Folder',
+            label: 'New Folder...',
             action: () => {
                 setLastClickedId(id)
                 handleAddFolder(id)
@@ -98,7 +102,7 @@ const ExplorerFileGroup: React.FC<ExplorerFileGroupProps> = ({
         },
         {
             id: 'rename',
-            label: 'Rename',
+            label: 'Rename...',
             action: () => {
                 setFileMenuActionName('Edit')
                 setEditingFileId(id);
@@ -114,16 +118,16 @@ const ExplorerFileGroup: React.FC<ExplorerFileGroupProps> = ({
     const currentFileData = useSelector((state: RootState) => state.app.currentFileData);
     const allOpenFiles = useSelector((state: RootState) => state.app.allOpenFiles);
     const [opened, setOpened] = useState(false);
-    // const [fileHoverId, setFileHoverId] = useState("");
     const [fileMenuActionName, setFileMenuActionName] = useState("");
     const [newName, setNewName] = useState(name);
     const fileContextMenu = useContextMenu({ id: FILE_MENU_ID });
     const folderContextMenu = useContextMenu({ id: FOLDER_MENU_ID });
+    const isDuplicateDetectedRef = useRef(isDuplicateDetected);
 
     // Check if the current group has nested children
     const hasChildren = Array.isArray(children) && children.length > 0;
 
-    // Render nested LinksGroup recursively for folder children
+    // Render nested ExplorerFileGroup recursively for folder children
     const nestedItems = hasChildren
         ? children.map((child) => (
             <ExplorerFileGroup
@@ -142,8 +146,14 @@ const ExplorerFileGroup: React.FC<ExplorerFileGroupProps> = ({
                 handleAddFolder={handleAddFolder}
                 deleteFileOrFolder={deleteFileOrFolder}
                 newFileFolderName={newFileFolderName}
+                isDuplicateDetected={isDuplicateDetected}
+                setIsDuplicateDetected={setIsDuplicateDetected}
             />))
         : null;
+
+    useEffect(() => {
+        isDuplicateDetectedRef.current = isDuplicateDetected;
+    }, [isDuplicateDetected]);
 
     const handleFolderClick = (e: React.MouseEvent<HTMLButtonElement>) => {
         if (fileMenuActionName === "Edit") return;
@@ -154,29 +164,42 @@ const ExplorerFileGroup: React.FC<ExplorerFileGroupProps> = ({
 
     const handleFileNameSave = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === 'Enter' && newName.trim()) {
-            updateFileOrFolderName(id, newName.trim());
-            setFileMenuActionName("")
+            updateFileOrFolderName(parentId, id, newName.trim());
+            setTimeout(() => {
+                if (!isDuplicateDetectedRef.current.detected) {
+                    setFileMenuActionName("");
+                    setNewName("");
+                }
+            }, 1000);
+
         } else if (e.key === 'Escape') {
             setEditingFileId(null); // Cancel editing
             setFileMenuActionName("")
+            setNewName("");
         }
 
     };
 
     const handleFileNameBlur = () => {
+        if (isDuplicateDetectedRef.current.detected) {
+            setEditingFileId(null); // Cancel editing
+            setFileMenuActionName("");
+            setNewName("");
+            setIsDuplicateDetected({ detected: false, duplicateName: "" })
+            return;
+        }
         if (newName.trim()) {
-            updateFileOrFolderName(id, newName.trim());
+            updateFileOrFolderName(parentId, id, newName.trim());
         } else {
             setEditingFileId(null); // Cancel editing
         }
-        setFileMenuActionName("")
     };
 
     const onFileOpen = () => {
         if (currentFileData.id === id) return;
-        dispatch(setCurrentFileData({ content, name, id, path }));
+        dispatch(setCurrentFileData({ content, name, id, path, parentId }));
         if (!allOpenFiles.find((file) => file.id === id)) {
-            dispatch(setAllOpenFiles([...allOpenFiles, { content, name, id, path }]));
+            dispatch(setAllOpenFiles([...allOpenFiles, { content, name, id, path, parentId }]));
         }
     };
 
@@ -189,7 +212,8 @@ const ExplorerFileGroup: React.FC<ExplorerFileGroupProps> = ({
         folderIcon = <IconFolderFilled className="folder-collapse__chevron folder-close__icon" stroke={1.5} size={16} />;
     }
 
-    function handleContextMenu(event: React.MouseEvent, menuId: string) {
+    const handleContextMenu = (event: React.MouseEvent, menuId: string) => {
+        event.stopPropagation()
         event.preventDefault(); // Prevent default right-click behavior
 
         if (menuId === FILE_MENU_ID) {
@@ -240,17 +264,31 @@ const ExplorerFileGroup: React.FC<ExplorerFileGroupProps> = ({
                             {creatingItem.type === "file" ? <FileIcon name={newFileFolderName} /> : <IconFolderFilled className="folder-collapse__chevron"
                                 stroke={1.5}
                                 size={16} />}
-                            <TextInput
-                                size="xs"
-                                className="creating-file-input"
-                                onChange={onNameInputChange}
-                                autoFocus
-                                onBlur={onNameInputBlur}
-                                placeholder={`Enter ${creatingItem.type} name`}
-                                onKeyDown={(e) => onNameInput(e, id, creatingItem.type === 'file')}
-                            />
+                            <Popover
+                                offset={1}
+                                position="bottom"
+                                width="target"
+                                shadow="md"
+                                defaultOpened={false}
+                                opened={isDuplicateDetected.detected}
+                                classNames={{ dropdown: "file-name-field-popover" }}
+                            >
+                                <Popover.Target>
+                                    <TextInput
+                                        size="xs"
+                                        className={`creating-file-input ${isDuplicateDetected.detected ? "creating-file-input-error" : ""}`}
+                                        onChange={onNameInputChange}
+                                        autoFocus
+                                        onBlur={onNameInputBlur}
+                                        placeholder={`Enter ${creatingItem.type} name`}
+                                        onKeyDown={(e) => onNameInput(e, id, creatingItem.type === 'file')}
+                                    />
+                                </Popover.Target>
+                                <Popover.Dropdown>
+                                    <Text size="xs">A file or folder with name <b>{isDuplicateDetected.duplicateName}</b> already exist at this location.</Text>
+                                </Popover.Dropdown>
+                            </Popover>
                         </div>
-
                     )}
 
                     {hasChildren && (
@@ -272,26 +310,45 @@ const ExplorerFileGroup: React.FC<ExplorerFileGroupProps> = ({
                     >
                         <FileIcon name={newName || name} />
                         {fileMenuActionName === "Edit" && editingFileId === id ?
-                            <TextInput
-                                className='editing-file-name-input'
-                                size="xs"
-                                onChange={(e) => setNewName(e.target.value)}
-                                onKeyDown={handleFileNameSave}
-                                onBlur={handleFileNameBlur}
-                                autoFocus
-                                placeholder="Enter file name"
-                                defaultValue={name}
-                            /> :
+                            <Popover
+                                offset={1}
+                                width="target"
+                                position="bottom"
+                                shadow="md"
+                                defaultOpened={false}
+                                opened={isDuplicateDetected.detected}
+                                classNames={{ dropdown: "file-name-field-popover" }}
+                            >
+                                <Popover.Target>
+                                    <TextInput
+                                        className={`editing-file-name-input ${isDuplicateDetected.detected ? "editing-file-name-input-error" : ""}`}
+                                        size="xs"
+                                        onChange={(e) => {
+                                            setNewName(e.target.value)
+                                            setIsDuplicateDetected({ detected: false, duplicateName: "" })
+                                        }}
+                                        onKeyDown={handleFileNameSave}
+                                        onBlur={handleFileNameBlur}
+                                        autoFocus
+                                        placeholder="Enter file name"
+                                        defaultValue={name}
+                                    />
+                                </Popover.Target>
+                                <Popover.Dropdown>
+                                    <Text size="xs">A file or folder with name <b>{isDuplicateDetected.duplicateName}</b> already exist at this location.</Text>
+                                </Popover.Dropdown>
+                            </Popover> :
                             <Text>{name}</Text>
                         }
                     </Button>
                 </Flex>
-            )}
+            )
+            }
             <ContextMenu
                 items={type === 'folder' ? folderContextMenuItems : fileContextMenuItems}
                 menuId={type === 'folder' ? FOLDER_MENU_ID : FILE_MENU_ID}
             />
-        </div>
+        </div >
     );
 };
 

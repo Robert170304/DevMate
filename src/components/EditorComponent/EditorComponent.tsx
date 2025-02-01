@@ -4,9 +4,9 @@ import { Box } from "@mantine/core";
 
 
 interface EditorComponentProps {
-    content: string;
+    content: string | undefined;
     language: string;
-    onContentChange: (value: string | undefined) => void;
+    onContentChange: (value: string) => void;
 }
 
 const EditorComponent: React.FC<EditorComponentProps> = ({ content, language, onContentChange }) => {
@@ -42,7 +42,7 @@ const EditorComponent: React.FC<EditorComponentProps> = ({ content, language, on
                 language={language}
                 value={content}
                 beforeMount={handleEditorWillMount}
-                onChange={onContentChange}
+                onChange={(value) => onContentChange(value ?? "")}
                 theme="vs-dark"
             />
         </Box>

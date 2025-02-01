@@ -35,15 +35,19 @@
   }
 
   .explorer-navbar__content {
-    // margin: 10px;
     .creating-file-input__container {
       display: flex;
       align-items: center;
       gap: 10px;
-      margin-left: 20px;
+      margin-left: 10px;
       margin-top: 10px;
       .creating-file-input {
         width: -webkit-fill-available;
+      }
+      .creating-file-input-error {
+        .mantine-TextInput-input {
+          border-color: #d00000;
+        }
       }
     }
 
@@ -57,5 +61,13 @@
   }
   .mantine-ScrollArea-scrollbar {
     display: none;
+  }
+}
+
+.file-name-field-popover {
+  background: #9d0208;
+  border-color: #d00000;
+  .mantine-Popover-arrow {
+    border-color: #d00000;
   }
 }

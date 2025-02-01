@@ -1,6 +1,6 @@
 import { IconGitBranch, IconRobot, IconUsers } from '@tabler/icons-react';
 
-export const emptyFileObj: FileItemDTO = { type: "file", path: "", content: "", id: "", name: "" }
+export const emptyFileObj: FileItemDTO = { path: "", content: "", id: "", name: "", parentId: "" }
 
 export const allRoutes = [
   { path: "/", name: "home" },
@@ -46,6 +46,7 @@ export const featuresData = [
 
 export const explorerData: ExplorerItem[] = [
   {
+    parentId: "root",
     id: "1",
     name: "src",
     type: "folder",
@@ -56,12 +57,14 @@ export const explorerData: ExplorerItem[] = [
         name: "components",
         type: "folder",
         path: "src/components",
+        parentId: "1",
         children: [
           {
             id: "3",
             name: "HeroSection",
             type: "folder",
             path: "src/components/HeroSection",
+            parentId: "2",
             children: [
               {
                 id: "4",
@@ -69,6 +72,7 @@ export const explorerData: ExplorerItem[] = [
                 type: "file",
                 path: "src/components/HeroSection/HeroSection.tsx",
                 content: "// HeroSection component code goes here",
+                parentId: "3",
               },
               {
                 id: "5",
@@ -76,6 +80,7 @@ export const explorerData: ExplorerItem[] = [
                 type: "file",
                 path: "src/components/HeroSection/HeroSection.scss",
                 content: "/* HeroSection-specific styles */",
+                parentId: "3",
               },
             ],
           },
@@ -84,6 +89,7 @@ export const explorerData: ExplorerItem[] = [
             name: "Footer",
             type: "folder",
             path: "src/components/Footer",
+            parentId: "2",
             children: [
               {
                 id: "7",
@@ -91,6 +97,7 @@ export const explorerData: ExplorerItem[] = [
                 type: "file",
                 path: "src/components/Footer/Footer.tsx",
                 content: "// Footer component code goes here",
+                parentId: "6",
               },
               {
                 id: "8",
@@ -98,6 +105,7 @@ export const explorerData: ExplorerItem[] = [
                 type: "file",
                 path: "src/components/Footer/Footer.scss",
                 content: "/* Footer-specific styles */",
+                parentId: "6",
               },
             ],
           },
@@ -108,6 +116,7 @@ export const explorerData: ExplorerItem[] = [
         name: "styles",
         type: "folder",
         path: "src/styles",
+        parentId: "1",
         children: [
           {
             id: "10",
@@ -115,6 +124,7 @@ export const explorerData: ExplorerItem[] = [
             type: "file",
             path: "src/styles/global.scss",
             content: "/* Global styles */",
+            parentId: "9",
           },
           {
             id: "11",
@@ -122,6 +132,7 @@ export const explorerData: ExplorerItem[] = [
             type: "file",
             path: "src/styles/HeroSection.scss",
             content: "/* HeroSection-specific styles */",
+            parentId: "9",
           },
         ],
       },
@@ -130,6 +141,7 @@ export const explorerData: ExplorerItem[] = [
         name: "utils",
         type: "folder",
         path: "src/utils",
+        parentId: "1",
         children: [
           {
             id: "13",
@@ -137,6 +149,7 @@ export const explorerData: ExplorerItem[] = [
             type: "file",
             path: "src/utils/fetchData.ts",
             content: "// Utility function to fetch data",
+            parentId: "12",
           },
           {
             id: "14",
@@ -144,6 +157,7 @@ export const explorerData: ExplorerItem[] = [
             type: "file",
             path: "src/utils/formatDate.ts",
             content: "// Utility function to format date",
+            parentId: "12",
           },
         ],
       },
@@ -154,6 +168,7 @@ export const explorerData: ExplorerItem[] = [
     name: "public",
     type: "folder",
     path: "public",
+    parentId: "root",
     children: [
       {
         id: "16",
@@ -161,6 +176,7 @@ export const explorerData: ExplorerItem[] = [
         type: "file",
         path: "public/favicon.ico",
         content: "/* Favicon file */",
+        parentId: "15",
       },
       {
         id: "17",
@@ -168,6 +184,7 @@ export const explorerData: ExplorerItem[] = [
         type: "file",
         path: "public/logo.png",
         content: "/* Logo image file */",
+        parentId: "15",
       },
     ],
   },
@@ -176,6 +193,7 @@ export const explorerData: ExplorerItem[] = [
     name: "package.json",
     type: "file",
     path: "package.json",
+    parentId: "root",
     content: `
 {
   "name": "devmate",
@@ -194,6 +212,7 @@ export const explorerData: ExplorerItem[] = [
     type: "file",
     path: "README.md",
     content: "# DevMate\nThis is a knowledge explorer project built with Next.js.",
+    parentId: "root",
   },
 ];
 

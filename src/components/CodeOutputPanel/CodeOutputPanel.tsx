@@ -1,5 +1,5 @@
 import { Box, Text } from '@mantine/core'
-import React, { type JSX } from 'react'
+import React from 'react'
 import "./CodeOutputPanel.scss"
 import { useSelector } from 'react-redux';
 import type { RootState } from '@devmate/store/store';
@@ -8,7 +8,8 @@ import type { RootState } from '@devmate/store/store';
 
 const CodeOutputPanel = () => {
     const outputPanelContent = useSelector((state: RootState) => state.app.outputPanelContent);
-    const renderOutput = (content: string): JSX.Element[] => {
+    const renderOutput = (content: string | undefined) => {
+        if (!content) return <></>;
         return content.split('\n').map((line, index) => (
             <React.Fragment key={line.trim() + index}> {/* Using a combination of line content and index to create a unique key */}
                 {line}

@@ -26,15 +26,16 @@ declare global {
         children?: ExplorerFileGroupDTO[];
         content?: string;
         path: string;
+        parentId: string;
     }
 
     type ExplorerItem =
-        { id: string; name: string; type: 'file'; content: string; path: string; }
-        | { id: string; name: string; type: 'folder'; children: ExplorerItem[]; path: string; };
+        { id: string; name: string; type: 'file'; content: string | undefined; path: string; parentId: string; }
+        | { id: string; name: string; type: 'folder'; children: ExplorerItem[]; path: string; parentId: string; };
 
-    type FolderItemDTO = { id: string; name: string; type: 'folder'; children: ExplorerItem[]; path: string; };
+    type FolderItemDTO = { id: string; name: string; children: ExplorerItem[]; path: string; parentId: string; };
 
-    type FileItemDTO = { id: string; name: string; type: 'file'; content: string; path: string; }
+    type FileItemDTO = { id: string; name: string; content: string | undefined; path: string; parentId: string; }
 
     interface SavedDraft {
         id?: number;

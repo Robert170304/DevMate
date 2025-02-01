@@ -5,11 +5,11 @@ const appActions = {
   SET_IS_TERMINAL_OPEN: "SET_IS_TERMINAL_OPEN",
   SET_OUTPUT_PANEL_CONTENT: "SET_OUTPUT_PANEL_CONTENT",
 
-  setCurrentFileData: (data: { name: string, path: string, content: string | undefined, id: string }) => ({
+  setCurrentFileData: (data: FileItemDTO) => ({
     type: appActions.SET_CURRENT_FILE_DATA,
     data,
   }),
-  setAllOpenFiles: (data: { name: string, path: string, content: string | undefined, id: string }[]) => ({
+  setAllOpenFiles: (data: FileItemDTO[]) => ({
     type: appActions.SET_ALL_OPEN_FILES,
     data,
   }),

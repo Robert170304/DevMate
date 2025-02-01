@@ -1,5 +1,6 @@
 import { toast, ToastOptions } from "react-hot-toast";
 import { notifications } from '@mantine/notifications';
+import { has } from "lodash";
 
 export const notify = (text: string, extraParams: ToastOptions) => {
   toast.dismiss();
@@ -39,6 +40,43 @@ export const findFileOrFolderByPath = (data: ExplorerItem[], path: string): Expl
   }
   return null;
 };
+
+export const findFileOrFolderByNameInFolder = (
+  data: ExplorerItem[],
+  parentId: string,
+  fileName: string
+): ExplorerItem | null => {
+
+  // If folderId is null, search in the root level
+  if (parentId === "root") {
+    for (const item of data) {
+      if (item.name === fileName) {
+        return item; // Found the file at the root level
+      }
+    }
+    return null; // File not found in root or any subfolder
+  }
+
+  // Otherwise, find the folder by its id
+  const folder = data.find(item => item.id === parentId && item.type === 'folder');
+
+  if (!folder || !has(folder, "children")) return null; // If folder not found, return null
+
+  // Search within the folder's children (this is the recursive part)
+  for (const item of folder.children as ExplorerItem[]) {
+    if (item.name === fileName) {
+      return item; // Found the file in this folder
+    }
+    // If the item is a folder, search recursively inside it
+    if (item.type === 'folder') {
+      const foundInChildren = findFileOrFolderByNameInFolder(item.children, parentId, fileName);
+      if (foundInChildren) return foundInChildren; // Return if found in subfolder
+    }
+  }
+
+  return null; // If the file is not found in this folder or its subfolders
+};
+
 
 
 export const showNotification = (props: MTNotificationProps) => {

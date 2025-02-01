@@ -79,6 +79,12 @@ $border-color: var(--mantine-color-gray-3);
     }
   }
 
+  .editing-file-name-input-error {
+    .mantine-TextInput-input {
+      border-color: #d00000;
+    }
+  }
+
   &.file-name__link_active {
     color: #c9c9c9;
   }
@@ -108,9 +114,22 @@ $border-color: var(--mantine-color-gray-3);
   .creating-file-input {
     width: -webkit-fill-available;
   }
+  .creating-file-input-error {
+    .mantine-TextInput-input {
+      border-color: #d00000;
+    }
+  }
 }
 .folder-context-menu-btn {
   position: absolute;
   right: 35px;
   top: 8px;
+}
+
+.file-name-field-popover {
+  background: #9d0208;
+  border-color: #d00000;
+  .mantine-Popover-arrow {
+    border-color: #d00000;
+  }
 }

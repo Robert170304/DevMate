@@ -1,18 +1,17 @@
 import { HYDRATE } from "next-redux-wrapper";
 import actions from "./actions";
-import { explorerData } from "@devmate/app/utils/utility";
 
 const initialState: State = {
-  currentFileData: { name: '', path: '', content: undefined, id: '' },
+  currentFileData: { name: '', path: '', content: "", id: '', parentId: "", },
   allOpenFiles: [],
-  fileTreeData: explorerData,
+  fileTreeData: [],
   isTerminalPanelOpen: false,
   outputPanelContent: [],
 };
 
 interface State {
-  currentFileData: { name: string, path: string, content: string | undefined, id: string };
-  allOpenFiles: { name: string, path: string, content: string | undefined, id: string }[];
+  currentFileData: FileItemDTO;
+  allOpenFiles: FileItemDTO[];
   fileTreeData?: ExplorerItem[];
   isTerminalPanelOpen: boolean;
   outputPanelContent: { stdout: string, stderr: string, file: FileItemDTO, logId: string }[];
@@ -30,12 +29,12 @@ const appReducer = (state: State = initialState, action: Action): State => {
     case actions.SET_CURRENT_FILE_DATA:
       return {
         ...state,
-        currentFileData: (action.data as { name: string, path: string, content: string | undefined, id: string }) || {}, // Ensure compatibility with State
+        currentFileData: (action.data as FileItemDTO) || {}, // Ensure compatibility with State
       };
     case actions.SET_ALL_OPEN_FILES:
       return {
         ...state,
-        allOpenFiles: (action.data as { name: string, path: string, content: string | undefined, id: string }[]) || {}, // Ensure compatibility with State
+        allOpenFiles: (action.data as FileItemDTO[]) || {}, // Ensure compatibility with State
       };
     case actions.SET_FILE_TREE_DATA:
       return {

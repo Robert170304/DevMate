@@ -31,7 +31,7 @@ const EditorView = () => {
         return fileExtension
     };
 
-    const updateFileTreeContent = (tree: ExplorerItem[], fileId: string, newContent: string | ""): ExplorerItem[] => {
+    const updateFileTreeContent = (tree: ExplorerItem[], fileId: string, newContent: string): ExplorerItem[] => {
         return tree.map((node) => {
             if (node.id === fileId) {
                 return { ...node, content: newContent };
@@ -42,7 +42,7 @@ const EditorView = () => {
         });
     };
 
-    const handleContentChange = (value: string | undefined) => {
+    const handleContentChange = (value: string) => {
         if (!currentFileData.id) return;
 
         const updatedCurrentFile = { ...currentFileData, content: value };
@@ -78,7 +78,7 @@ const EditorView = () => {
         }
 
         dispatch(setAllOpenFiles(updatedFiles));
-        dispatch(setCurrentFileData(newCurrentFile || { name: '', path: '', content: undefined, id: '' }));
+        dispatch(setCurrentFileData(newCurrentFile || { name: '', path: '', content: "", id: '', parentId: "" }));
     }
 
     const handleRunCode = async () => {
@@ -179,7 +179,7 @@ const EditorView = () => {
                             >
                                 <FilePathBreadCrumb />
                                 <EditorComponent
-                                    content={file?.content as string || " "}
+                                    content={file?.content ?? " "}
                                     language={getLanguageFromExtension(file?.name || " ")}
                                     onContentChange={handleContentChange}
                                 />
