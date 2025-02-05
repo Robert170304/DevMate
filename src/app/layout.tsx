@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Raleway } from "next/font/google";
-import { Session } from "next-auth";
+import { getServerSession, Session } from "next-auth";
 import { ColorSchemeScript, mantineHtmlProps } from '@mantine/core';
 import Providers from "./Providers";
 import SessionWatcher from "@devmate/components/SessionWatcher/SessionWatcher";
@@ -8,6 +8,8 @@ import PageLayout from "./PageLayout";
 import "./globals.scss";
 import '@mantine/core/styles.css';
 import '@mantine/notifications/styles.css';
+import '@mantine/code-highlight/styles.css';
+import { authConfig } from "./lib/auth/authConfig";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -33,12 +35,12 @@ export const metadata: Metadata = {
 
 export default async function RootLayout({
   children,
-  params
 }: Readonly<{
   children: React.ReactNode;
   params: Promise<{ session: Session | null }>;
 }>) {
-  const resolvedParams = await params;
+  const session = await getServerSession(authConfig);
+
   return (
     <html lang="en" {...mantineHtmlProps}>
       <head>
@@ -47,7 +49,7 @@ export default async function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${raleway.variable} antialiased`}
       >
-        <Providers session={resolvedParams?.session || null}>
+        <Providers session={session || null}>
           <SessionWatcher />
           <PageLayout>{children}</PageLayout>
         </Providers>

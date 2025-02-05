@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { Terminal } from "xterm";
 import "xterm/css/xterm.css";
 import "./CommandPanel.scss";
+import { apiHelper } from "@devmate/app/helpers/apiHelper";
 
 const CommandPanel = () => {
     const terminalRef = useRef<HTMLDivElement>(null);
@@ -50,15 +51,11 @@ const CommandPanel = () => {
 
     const executeCommand = async (command: string, term: Terminal) => {
         try {
-            const res = await fetch("/api/terminal", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ command }),
-            });
-
-            const data = await res.json();
+            const data = await apiHelper('/api/terminal', 'POST', {
+                command
+            }) as { output: string };
             console.log("🚀 ~ executeCommand ~ data:", data)
-            term.write("\r\n" + "robert");
+            term.write("\r\n" + data.output);
         } catch (error) {
             console.log("🚀 ~ executeCommand ~ error:", error)
             term.write("Error executing command.");

@@ -37,45 +37,44 @@ declare global {
 
     type FileItemDTO = { id: string; name: string; content: string | undefined; path: string; parentId: string; }
 
-    interface SavedDraft {
-        id?: number;
-        title: string;
-        subtitle: string;
-        content: string;
-        createdAt: string;
-    }
-
     interface UserResponseDTO {
         id: string;
         email: string;
-        verifiedEmail?: boolean;
-        firstName: string;
-        lastName: string;
         name: string;
         image: string;
     }
-    interface oauth2userinfo {
-        id?: string;
-        email?: string;
-        isEmailVerified?: boolean;
-        fullName?: string;
-        firstName?: string;
-        lastName?: string;
-        image?: string;
-        signInType?: string;
+
+    interface SessionResponse {
+        user: UserResponseDTO;
+        accessToken: string;
+        expires: string;
     }
 
-    interface SaveDraftResponse {
-        message: string;
-        draft?: {
-            id: number;
-            title: string;
-            subtitle?: string;
-            content: string;
-            userId: string;
-            createdAt: string;
-        };
-    };
+    interface RunCodeResponse {
+        success: boolean;
+        error?: string;
+        output: { stderr: string, stdout: string }
+    }
+
+    interface AIChatBoxDTO {
+        open: boolean,
+        isExplainCode: boolean,
+        isModifyCode: boolean,
+        modifyCodeContent: string,
+        explainCodeContent: string,
+        messages: {
+            id: string;
+            user: string;
+            text: string;
+            isCode?: boolean;
+            isGenerating?: boolean
+        }[]
+    }
+
+    interface AIAutoCompleteResponse {
+        suggestions: string[]
+    }
+
     interface SignInResponse {
         message: string;
         token?: string;
@@ -86,19 +85,6 @@ declare global {
         message: string;
         token?: string;
         user?: UserResponseDTO;
-    };
-    interface GoogleSignInResponse {
-        message: string;
-        token?: string;
-        user?: {
-            id: string;
-            email: string;
-            verified_email?: boolean;
-            given_name: string;
-            family_name: string;
-            name: string;
-            image: string;
-        };
     };
     interface DecodedToken {
         userId: string;
@@ -120,11 +106,6 @@ declare global {
         position?: string;
         iconTheme?: object;
         type?: 'success' | 'error' | 'info'; // Add the type property here
-    }
-
-    interface GetSavedDraftsResponse {
-        message: string;
-        drafts?: SavedDraft[];
     }
 
     interface VerifyUserResponse {

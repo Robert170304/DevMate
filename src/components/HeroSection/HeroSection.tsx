@@ -50,7 +50,7 @@ const HeroSection: React.FC = () => {
                 >
                     <Center p="xs" h="100%" className='hero-center' >
                         <video className="hero-video" autoPlay loop muted width="100%" height="90%" >
-                            <source src="/hero-dark-lg.mp4" type="video/mp4" />
+                            <source src="/devmate-hero-video.mp4" type="video/mp4" />
                             Your browser does not support the video tag.
                         </video>
                     </Center>

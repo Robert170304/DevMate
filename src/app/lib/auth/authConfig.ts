@@ -14,18 +14,26 @@ const options: NextAuthOptions = {
         }),
     ],
     callbacks: {
-        async jwt({ token, user }) {
+        async jwt({ token, user, account }) {
             if (user) {
                 token.id = user.id;
+            }
+            // Store access token if available (OAuth providers)
+            if (account) {
+                token.accessToken = account.access_token; // Add access token
             }
             return token;
         },
         async session({ session, token }) {
             session.user = { ...session.user, id: token.id as string };
+            // Attach access token to session
+            session = { ...session, accessToken: token.accessToken } as SessionResponse;
             return session;
         },
     },
 };
+
+export { options as authConfig };
 
 const authHandler = NextAuth(options); // Correct instantiation
 

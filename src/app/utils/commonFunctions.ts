@@ -1,6 +1,8 @@
 import { toast, ToastOptions } from "react-hot-toast";
 import { notifications } from '@mantine/notifications';
 import { has } from "lodash";
+import hljs from 'highlight.js';
+
 
 export const notify = (text: string, extraParams: ToastOptions) => {
   toast.dismiss();
@@ -187,4 +189,90 @@ export const collectFileIds = (data: ExplorerItem[], folderId: string): string[]
     }
   }
   return ids;
+};
+
+export const extractCodeLines = (suggestionsArray: string[]): string[] => {
+  const fullText = suggestionsArray.join("\n");
+  const codeBlockRegex = /```([a-z]*)\n([\s\S]*?)```/i;
+  const match = codeBlockRegex.exec(fullText);
+
+  if (match?.[2]) {
+    const language = match[1].toLowerCase(); // e.g., "python", "javascript"
+    let codeLines = match[2].split("\n").map(line => line.trim());
+
+    // Define patterns for different languages
+    const commentPatterns: Record<string, RegExp> = {
+      python: /^#/, // Remove lines starting with #
+      javascript: /^(\/\/|\/\*|\*\/)/, // Remove JS single-line and block comments
+      typescript: /^(\/\/|\/\*|\*\/)/,
+      java: /^(\/\/|\/\*|\*\/)/,
+      c: /^(\/\/|\/\*|\*\/)/,
+      cpp: /^(\/\/|\/\*|\*\/)/,
+      swift: /^\/\//,
+      ruby: /^#/,
+      php: /^(\/\/|\/\*|\*\/)/,
+      go: /^(\/\/|\/\*|\*\/)/,
+    };
+
+    const printPatterns: Record<string, RegExp> = {
+      python: /^print/,
+      javascript: /console\.log/,
+      typescript: /console\.log/,
+      java: /System\.out\.println/,
+      c: /printf/,
+      cpp: /cout/,
+      swift: /print/,
+      ruby: /puts/,
+      php: /echo|print/,
+      go: /fmt\.Print/,
+    };
+
+    // Remove comments
+    if (commentPatterns[language]) {
+      codeLines = codeLines.filter(line => !commentPatterns[language].test(line));
+    }
+
+    // Remove print/logging statements
+    if (printPatterns[language]) {
+      codeLines = codeLines.filter(line => !printPatterns[language].test(line));
+    }
+
+    return codeLines;
+  }
+
+  return [];
+};
+
+
+export const generateMessageId = () => {
+  return `${Date.now()}-${Math.random()}`
+}
+
+// export const detectCode = (text: string) => /```[\s\S]+?```/.test(text); // Detects code blocks
+
+export const detectCode = (text: string) => {
+  // Check for either code block using backticks or Python-specific patterns like 'def', 'import', etc.
+  const regex = /```[\s\S]+```|([^\n]+\n){2,}[ \t]+[^\n]+/;
+  return regex.test(text);
+};
+
+
+const autoDetectLanguage = (code: string): string => {
+  const result = hljs.highlightAuto(code);
+  return result.language ?? 'plaintext';
+};
+
+export const preprocessMDContent = (content: string): string => {
+  // If content already contains markdown code blocks, leave it untouched.
+  if (content.includes("```")) return content;
+
+  // Split into lines to check if it's multi-line.
+  const lines = content.split("\n");
+  if (lines.length < 2) return content;
+
+  // Use our auto-detection function.
+  const detectedLang = autoDetectLanguage(content);
+
+  // Wrap the content in a code block with the detected language.
+  return `\`\`\`${detectedLang}\n${content}\n\`\`\``;
 };

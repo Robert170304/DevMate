@@ -1,4 +1,4 @@
-import { Button, Flex, Image, Tabs, Title } from '@mantine/core';
+import { ActionIcon, Box, Flex, Image, Tabs, Title, Tooltip } from '@mantine/core';
 import classes from "./EditorViewTabs.module.scss"
 import EditorComponent from '../EditorComponent/EditorComponent';
 import React, { useState } from 'react';
@@ -12,18 +12,68 @@ import "./EditorView.scss"
 import { languageMap } from '@devmate/app/utils/utility';
 import FilePathBreadCrumb from '../FilePathBreadCrumb/FilePathBreadCrumb';
 import { generateUUID, showNotification } from '@devmate/app/utils/commonFunctions';
+import { apiHelper } from '@devmate/app/helpers/apiHelper';
+import GlobalOptionsMenu from '../GlobalOptionsMenu/GlobalOptionsMenu';
 
-const { setCurrentFileData, setAllOpenFiles, setFileTreeData, setIsTerminalOpen, setOutputPanelContent } = appActions;
+const {
+    setCurrentFileData,
+    setAllOpenFiles,
+    setFileTreeData,
+    setIsTerminalOpen,
+    setOutputPanelContent,
+    setIsAIChatBox,
+} = appActions;
 
 const EditorView = () => {
-
     const dispatch = useDispatch();
+    const AIChatBox = useSelector((state: RootState) => state.app.isAIChatBoxOpen);
     const currentFileData = useSelector((state: RootState) => state.app.currentFileData);
     const fileTreeData = useSelector((state: RootState) => state.app.fileTreeData);
     const allOpenFiles = useSelector((state: RootState) => state.app.allOpenFiles);
     const outputPanelContent = useSelector((state: RootState) => state.app.outputPanelContent);
     const [hoverTabId, setHoverTabId] = useState("");
     const [runCodeLoading, setRunCodeLoading] = useState(false);
+    const editorMoreOptions = [
+        {
+            id: 'run_code',
+            label: 'Run Code',
+            action: (e: React.MouseEvent<HTMLButtonElement>) => {
+                e.stopPropagation();
+                e.preventDefault();
+                handleRunCode()
+            },
+            isGroupEnd: false
+        },
+        {
+            id: 'output_panel',
+            label: 'Output Panel',
+            action: (e: React.MouseEvent<HTMLButtonElement>) => {
+                e.stopPropagation();
+                e.preventDefault();
+                dispatch(setIsAIChatBox({ ...AIChatBox, open: false }))
+                dispatch(setIsTerminalOpen(true));
+            },
+            isGroupEnd: true
+        },
+        {
+            id: 'ai_chat',
+            label: 'AI Chat',
+            action: () => {
+                dispatch(setIsTerminalOpen(false));
+                dispatch(setIsAIChatBox({ ...AIChatBox, open: true }))
+            },
+            isGroupEnd: true
+        },
+        {
+            id: 'close_all_files',
+            label: 'Close All',
+            action: () => {
+                dispatch(setAllOpenFiles([]))
+                dispatch(setCurrentFileData({ name: '', path: '', content: "", id: '', parentId: "" }))
+            },
+            isGroupEnd: false
+        },
+    ]
 
     const getLanguageFromExtension = (filePath: string) => {
         const extension = filePath.split(".").pop();
@@ -87,22 +137,16 @@ const EditorView = () => {
         } else {
             setRunCodeLoading(true);
             try {
-                const res = await fetch("/api/runcode", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        language: getLanguageFromExtension(currentFileData?.path || ""),
-                        code: currentFileData?.content ?? "",
-                    }),
-                });
-                const data = await res.json();
+                const data = await apiHelper('/api/runcode', 'POST', {
+                    language: getLanguageFromExtension(currentFileData?.path || ""),
+                    code: currentFileData?.content ?? "",
+                }) as RunCodeResponse;
 
                 if (!data.success) {
                     showNotification({ title: "Error", message: data?.error || "Something went wrong" });
                 } else {
                     dispatch(setOutputPanelContent([...outputPanelContent, { ...data.output, file: currentFileData, logId: generateUUID() }]));
+                    dispatch(setIsAIChatBox({ ...AIChatBox, open: false }))
                     dispatch(setIsTerminalOpen(true));
                     setRunCodeLoading(false);
                 }
@@ -170,22 +214,21 @@ const EditorView = () => {
                             )
                         })}
                     </Tabs.List>
-                    {allOpenFiles.map((file) => {
-                        return (
-                            <Tabs.Panel
-                                keepMounted={false}
-                                value={file.id}
-                                key={file.id}
-                            >
-                                <FilePathBreadCrumb />
-                                <EditorComponent
-                                    content={file?.content ?? " "}
-                                    language={getLanguageFromExtension(file?.name || " ")}
-                                    onContentChange={handleContentChange}
-                                />
-                            </Tabs.Panel>
-                        )
-                    })}
+                    {/* {allOpenFiles.map((file) => {
+                        return ( */}
+                    <Tabs.Panel
+                        keepMounted={false}
+                        value={currentFileData.id}
+                    >
+                        <FilePathBreadCrumb />
+                        <EditorComponent
+                            content={currentFileData?.content ?? " "}
+                            language={getLanguageFromExtension(currentFileData?.name || " ")}
+                            onContentChange={handleContentChange}
+                        />
+                    </Tabs.Panel>
+                    {/* ) */}
+                    {/* })} */}
                 </Tabs>
                 : <Flex flex={1} justify="center" align="center" direction="column" >
                     <div>
@@ -193,23 +236,25 @@ const EditorView = () => {
                     </div>
                     <Title order={3}>Open a file to start coding </Title>
                 </Flex>}
-
-            {currentFileData.id && <Button
-                h="35px"
-                variant="light"
-                color="gray"
-                size="sm"
-                className="run-button"
-                pos="absolute"
+            {!!allOpenFiles.length && <Box pos="absolute"
                 right="6px"
-                top="4px"
-                onClick={() => handleRunCode()}
-                loading={runCodeLoading}
-                loaderProps={{ color: "gray" }}
-            >
-                Run
-                <IconPlayerPlayFilled size={15} style={{ marginLeft: 10 }} />
-            </Button>}
+                top="8px">
+                {currentFileData.id && !AIChatBox.open &&
+                    <Tooltip label="Run Code" withArrow>
+                        <ActionIcon
+                            loading={runCodeLoading}
+                            onClick={() => handleRunCode()}
+                            variant="subtle"
+                            color="gray"
+                            aria-label="Run Code"
+                        >
+                            <IconPlayerPlayFilled size={15} />
+                        </ActionIcon>
+                    </Tooltip>
+                }
+                <GlobalOptionsMenu items={editorMoreOptions} />
+            </Box>}
+
         </Flex>
     );
 }

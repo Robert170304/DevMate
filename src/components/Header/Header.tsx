@@ -10,14 +10,13 @@ import { useEffect, useState } from 'react';
 import useWindowSize from '@devmate/app/hooks/useWindowSizes';
 import { useDisclosure } from '@mantine/hooks';
 
+
 const Header: React.FC = () => {
     const { width } = useWindowSize()
     const router = useRouter();
     const [scrolled, setScrolled] = useState(false);
     const { data: session } = useSession();
     const [opened, { toggle }] = useDisclosure();
-
-    console.log("🚀 ~ session:", session);
 
     useEffect(() => {
         const handleScroll = () => {

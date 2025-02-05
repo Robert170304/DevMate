@@ -9,6 +9,7 @@ import { PersistGate } from "redux-persist/integration/react";
 import { Notifications } from '@mantine/notifications';
 import FullScreenLoader from "@devmate/components/LoaderFullScreen/LoaderFullScreen";
 import { persistor, store } from "@devmate/store/store";
+import { OptionsMenuProvider } from "./context/OptionsMenuContext";
 
 interface ProvidersProps {
     children: React.ReactNode;
@@ -23,20 +24,22 @@ export default function Providers({ children, session }: Readonly<ProvidersProps
                 fontFamily: 'Raleway, sans-serif',
                 headings: { fontFamily: 'Raleway, sans-serif' },
             }} >
-                <Notifications />
-                <ScreenLoaderProvider>
-                    <NavigationAutoLoader />
-                    <ReduxProvider store={store}>
-                        <PersistGate
-                            loading={
-                                <FullScreenLoader />
-                            }
-                            persistor={persistor}
-                        >
-                            {children}
-                        </PersistGate>
-                    </ReduxProvider>
-                </ScreenLoaderProvider>
+                <OptionsMenuProvider>
+                    <Notifications />
+                    <ScreenLoaderProvider>
+                        <NavigationAutoLoader />
+                        <ReduxProvider store={store}>
+                            <PersistGate
+                                loading={
+                                    <FullScreenLoader />
+                                }
+                                persistor={persistor}
+                            >
+                                {children}
+                            </PersistGate>
+                        </ReduxProvider>
+                    </ScreenLoaderProvider>
+                </OptionsMenuProvider>
             </MantineProvider>
         </SessionProvider>
     );

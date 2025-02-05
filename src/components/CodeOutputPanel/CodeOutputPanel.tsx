@@ -18,25 +18,23 @@ const CodeOutputPanel = () => {
         ));
     };
     return (
-        <Box w="100%" >
-            {outputPanelContent.map((log) => {
-                if (log.stdout) {
-                    return (
-                        <Text key={log.logId} className="logs">
+        <Box w="100%">
+            {outputPanelContent.map((log) => (
+                <React.Fragment key={log.logId}>
+                    {log.stdout && (
+                        <Text className="logs">
                             <strong>stdout {log.file.path} :</strong>
                             {renderOutput(log.stdout)}
                         </Text>
-                    )
-                }
-                if (log.stderr) {
-                    return (
-                        <Text key={log.logId} className="logs">
+                    )}
+                    {log.stderr && (
+                        <Text className="logs">
                             <strong>stderr {log.file.path} :</strong>
                             {renderOutput(log.stderr)}
                         </Text>
-                    )
-                }
-            })}
+                    )}
+                </React.Fragment>
+            ))}
         </Box>
     )
 }

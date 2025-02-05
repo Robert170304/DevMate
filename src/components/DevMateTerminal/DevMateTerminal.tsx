@@ -97,15 +97,15 @@ const DevMateTerminal = () => {
             <Box className='terminal_header' >
                 <Box className='terminal_header__actions' >
                     <Tooltip label="Delete Terminal" withArrow>
-                        <ActionIcon variant="subtle" color="gray" onClick={() => dispatch(setIsTerminalOpen(false))} >
+                        <ActionIcon variant="subtle" color="gray" onClick={() => {
+                            dispatch(setIsTerminalOpen(false));
+                            dispatch(setOutputPanelContent([]));
+                        }}  >
                             <IconTrashXFilled size={13} />
                         </ActionIcon>
                     </Tooltip>
                     <Tooltip label="Close Terminal" withArrow>
-                        <ActionIcon variant="subtle" color="gray" onClick={() => {
-                            dispatch(setIsTerminalOpen(false));
-                            dispatch(setOutputPanelContent([]));
-                        }} >
+                        <ActionIcon onClick={() => dispatch(setIsTerminalOpen(false))} variant="subtle" color="gray">
                             <IconX size={13} />
                         </ActionIcon>
                     </Tooltip>
