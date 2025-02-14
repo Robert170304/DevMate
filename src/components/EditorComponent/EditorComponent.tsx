@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import Editor, { useMonaco, type Monaco } from '@monaco-editor/react';
+import * as monaco_editor from 'monaco-editor';
 import type { editor as EditorType } from 'monaco-editor';
 import { Box, Dialog, TextInput } from "@mantine/core";
 import { apiHelper } from "@devmate/app/helpers/apiHelper";
@@ -7,18 +8,27 @@ import { debounce } from "lodash";
 import { useDispatch, useSelector } from "react-redux";
 import appActions from "@devmate/store/app/actions";
 import type { RootState } from "@devmate/store/store";
+import "./EditorComponent.scss"
+import { useSocket } from "@devmate/app/context/SocketProvider";
 
-const { setIsAIChatBox, setIsTerminalOpen } = appActions
+const { setIsAIChatBox, setIsTerminalOpen, setActiveCollabSession } = appActions
+
 interface EditorComponentProps {
     content: string | undefined;
     language: string;
     onContentChange: (value: string) => void;
+    readOnly?: boolean;
 }
 
-const EditorComponent: React.FC<EditorComponentProps> = ({ content, language, onContentChange }) => {
+const EditorComponent: React.FC<EditorComponentProps> = ({ content, language, onContentChange, readOnly = false }) => {
+    const socket = useSocket();
     const AIChatBox = useSelector((state: RootState) => state.app.isAIChatBoxOpen);
+    const activeCollabSession = useSelector((state: RootState) => state.app.activeCollabSession);
     const [aiChatBoxData, setAiChatBoxData] = useState<AIChatBoxDTO>({
         open: false, messages: [], isExplainCode: false, explainCodeContent: "", isModifyCode: false, modifyCodeContent: ""
+    })
+    const [activeCollabSessionData, setActiveCollabSessionData] = useState<ActiveCollabSessionDTO>({
+        isChatBoxOpen: false, chatMsgs: [], sessionId: "", managerId: "", users: []
     })
     const dispatch = useDispatch()
     const monaco = useMonaco();
@@ -30,6 +40,16 @@ const EditorComponent: React.FC<EditorComponentProps> = ({ content, language, on
         selectedCode: "",
         userInstruction: "",
     });
+    // const isUpdatingRef = useRef(false); // Prevents looping updates
+
+
+    useEffect(() => {
+        setAiChatBoxData(AIChatBox)
+    }, [AIChatBox])
+
+    useEffect(() => {
+        setActiveCollabSessionData(activeCollabSession)
+    }, [activeCollabSession])
 
 
     useEffect(() => {
@@ -91,6 +111,10 @@ const EditorComponent: React.FC<EditorComponentProps> = ({ content, language, on
                         explainCodeContent: `Explain the following ${language} code:
                         \n\n\`\`\`${selectedCode}\`\`\`\n\n`,
                     }))
+                    dispatch(setActiveCollabSession({
+                        ...activeCollabSessionData,
+                        isChatBoxOpen: false
+                    }))
                     dispatch(setIsTerminalOpen(false));
                 },
             });
@@ -122,7 +146,6 @@ const EditorComponent: React.FC<EditorComponentProps> = ({ content, language, on
 
     }, [monaco, language]);
 
-
     const handleEditorWillMount = (monacoEditorRef: Monaco) => {
         monacoEditorRef.languages.typescript.typescriptDefaults.setCompilerOptions({
             jsx: monacoEditorRef.languages.typescript.JsxEmit.React, // Enable JSX support
@@ -146,10 +169,6 @@ const EditorComponent: React.FC<EditorComponentProps> = ({ content, language, on
         );
     };
 
-    useEffect(() => {
-        setAiChatBoxData(AIChatBox)
-    }, [AIChatBox])
-
     const handleModifyCode = async () => {
         const { selectedCode, userInstruction } = modifyDialogData;
 
@@ -168,7 +187,56 @@ const EditorComponent: React.FC<EditorComponentProps> = ({ content, language, on
             modifyCodeContent: `${userInstruction}:
             \n\n\`\`\`${selectedCode}`,
         }));
+        dispatch(setActiveCollabSession({
+            ...activeCollabSessionData,
+            isChatBoxOpen: false
+        }))
     };
+
+    const handleEditorDidMount = (editor: EditorType.IStandaloneCodeEditor) => {
+        editorRef.current = editor; // Save the reference
+    };
+
+    // Listen for cursor updates from other users
+    const remoteCursors = new Map<string, monaco_editor.editor.IEditorDecorationsCollection>(); // Store user cursors
+
+    socket?.on("receive-cursor-update", (data) => {
+        console.log("🚀 ~ socket.on ~ editorRef.current:", editorRef.current, monaco)
+        if (editorRef.current && data.language === language && monaco) {
+            const { userId, position } = data;
+
+            // Remove the old cursor if it exists
+            if (remoteCursors.has(userId)) {
+                remoteCursors.get(userId)?.clear();
+            }
+
+            // Define new cursor decoration
+            const decorations = [
+                {
+                    range: new monaco.Range(
+                        position.lineNumber,
+                        position.column,
+                        position.lineNumber,
+                        position.column + 1
+                    ),
+                    options: {
+                        className: `remote-cursor`, // Unique class for each user
+                        stickiness: monaco.editor.TrackedRangeStickiness.NeverGrowsWhenTypingAtEdges
+                    },
+                }
+            ];
+            console.log("🚀 ~ socket.on ~ decorations:", decorations)
+
+            // Add new cursor decoration and store it
+            const decorationCollection = editorRef.current.createDecorationsCollection(decorations);
+            // const decorationIds = editorRef.current.deltaDecorations([], decorations);
+            // console.log("🚀 Cursor Decoration Applied:", decorationIds);
+
+            remoteCursors.set(userId, decorationCollection);
+            console.log("🚀 ~ socket.on ~ remoteCursors:", remoteCursors)
+
+        }
+    });
 
 
 
@@ -181,7 +249,8 @@ const EditorComponent: React.FC<EditorComponentProps> = ({ content, language, on
                 beforeMount={handleEditorWillMount}
                 onChange={(value) => onContentChange(value ?? "")}
                 theme="vs-dark"
-                onMount={(editor) => (editorRef.current = editor)}
+                onMount={handleEditorDidMount}
+                options={{ readOnly }}
             />
             <Dialog
                 opened={modifyDialogData.open}

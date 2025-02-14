@@ -9,7 +9,6 @@ import { has } from "lodash";
 
 const LivePreview = () => {
     const query = useParams();
-    console.log("🚀 ~ LivePreview ~ query:", query)
     const iframeRef = useRef<HTMLIFrameElement>(null);
     const fileTreeData = useSelector((state: RootState) => state.app.fileTreeData);
     const [currentHTMLFile, setCurrentHTMLFile] = useState<FileItemDTO | null>()
@@ -23,7 +22,6 @@ const LivePreview = () => {
 
     useEffect(() => {
         if (!iframeRef.current || !currentHTMLFile) return;
-        console.log("🚀 ~ useEffect ~ currentHTMLFile:", currentHTMLFile)
 
         const iframe = iframeRef.current;
         const doc = iframe.contentDocument || iframe.contentWindow?.document;
@@ -40,7 +38,6 @@ const LivePreview = () => {
         // Inject CSS from Redux store
         linkTags.forEach((link) => {
             let href = link.getAttribute("href");
-            console.log("🚀 ~ linkTags.forEach ~ href:", href, fileTreeData)
             if (!href) return;
             if (!fileTreeData) return;
 
@@ -49,7 +46,6 @@ const LivePreview = () => {
 
             // Find the file in Redux store
             const cssFile = findFileOrFolderByPath(fileTreeData, href)
-            console.log("🚀 ~ linkTags.forEach ~ cssFile:", cssFile)
             if (cssFile && cssFile.type === "file") {
                 const styleTag = doc.createElement("style");
                 styleTag.innerHTML = cssFile.content ?? "";
@@ -69,9 +65,7 @@ const LivePreview = () => {
 
             // Find the file in Redux store
             const jsFile = findFileOrFolderByPath(fileTreeData, src)
-            console.log("🚀 ~ scriptTags.forEach ~ jsFile:", jsFile)
             if (jsFile && jsFile.type === "file") {
-                console.log("🚀 ~ scriptTags.forEach ~ jsFile:", jsFile)
                 const scriptTag = doc.createElement("script");
                 scriptTag.innerHTML = jsFile.content ?? "";
                 scriptTag.defer = true;
@@ -80,7 +74,6 @@ const LivePreview = () => {
             }
         });
 
-        console.log("🚀 ~ linkTags.forEach ~ doc:", doc)
 
 
     }, [currentHTMLFile, fileTreeData]);

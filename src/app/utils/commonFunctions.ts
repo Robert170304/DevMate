@@ -2,21 +2,27 @@ import { toast, ToastOptions } from "react-hot-toast";
 import { notifications } from '@mantine/notifications';
 import { has } from "lodash";
 import hljs from 'highlight.js';
+import { languageMap } from "./utility";
 
+export const truncateText = (text: string, wordLimit: number = 5) => {
+  const words = text.split(" ");
+  return words.length > wordLimit ? words.slice(0, wordLimit).join(" ") + "..." : text;
+};
 
 export const notify = (text: string, extraParams: ToastOptions) => {
   toast.dismiss();
   toast(text, { ...extraParams } as ToastOptions);
 };
 
-export const copyToClipBoard = async (text: string, shouldNotify: boolean = false) => {
+export const copyToClipBoard = async (text: string, shouldNotify: boolean = false, customCopyMsg: string = "") => {
   try {
     await navigator.clipboard.writeText(text);
     if (shouldNotify) {
-      notify("Copied to clipboard.", { icon: "✅" });
+      showNotification({ title: customCopyMsg || "Copied to clipboard.", message: "" })
     }
   } catch (err) {
     console.error("🚀 ~ copyToClipBoard ~ err:", err);
+    showNotification({ title: "Failed to copy!", message: "" })
     notify("Failed to copy!", { icon: "❌" });
   }
 };
@@ -89,7 +95,6 @@ export const showNotification = (props: MTNotificationProps) => {
     position,
     withCloseButton,
     onClose,
-    onOpen,
     autoClose,
     color,
     className,
@@ -99,11 +104,10 @@ export const showNotification = (props: MTNotificationProps) => {
   notifications.show({
     id: id ?? Math.random().toString(),
     title: title ?? "Notification",
-    message: message ?? "Notification message",
+    message: truncateText(message ?? "", 50) ?? "Notification message",
     position: position ?? "top-right",
     withCloseButton: withCloseButton ?? true,
     onClose: onClose ?? (() => { }),
-    onOpen: onOpen ?? (() => { }),
     autoClose: autoClose ?? 5000,
     color: color ?? "blue",
     className: className ?? undefined,
@@ -114,7 +118,6 @@ export const showNotification = (props: MTNotificationProps) => {
 
 
 export const getFileDefaultContent = (extension: string) => {
-  console.log("🚀 ~ getFileDefaultContent ~ extension:", extension)
   switch (extension) {
     case "js":
       return `console.log("Hello, World!")`;
@@ -275,4 +278,22 @@ export const preprocessMDContent = (content: string): string => {
 
   // Wrap the content in a code block with the detected language.
   return `\`\`\`${detectedLang}\n${content}\n\`\`\``;
+};
+
+
+export const updateFileTreeContent = (tree: ExplorerItem[], fileId: string, newContent: string): ExplorerItem[] => {
+  return tree.map((node) => {
+    if (node.id === fileId) {
+      return { ...node, content: newContent };
+    } else if (node.type === "folder") {
+      return { ...node, children: updateFileTreeContent(node.children, fileId, newContent) };
+    }
+    return node;
+  });
+};
+
+export const getLanguageFromExtension = (filePath: string) => {
+  const extension = filePath.split(".").pop();
+  const fileExtension = languageMap[extension ?? ""] || "plaintext";
+  return fileExtension
 };

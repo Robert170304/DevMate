@@ -2,10 +2,10 @@ import { IconGitBranch, IconRobot, IconUsers } from '@tabler/icons-react';
 
 export const emptyFileObj: FileItemDTO = { path: "", content: "", id: "", name: "", parentId: "" }
 
-export const allRoutes = [
-  { path: "/", name: "home" },
-  { path: "/about-devmate", name: "about" },
-  { path: "/workspace", name: "workspace" }
+export const privateRoutes = [
+  { path: "/workspace", name: "workspace" },
+  { path: "/share", name: "share" },
+  { path: "/live-preview", name: "live preview" }
 ]
 
 export const footerLinks = [

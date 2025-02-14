@@ -1,6 +1,17 @@
 export { }; // Ensure this file is treated as a module
 
 declare global {
+
+    interface ActiveCollabSessionDTO {
+        sessionId: string;
+        users: { id: string, username: string }[]
+        managerId: string;
+        chatMsgs: { id: string, user: string, text: string, isCode: boolean }[];
+        isChatBoxOpen: boolean;
+    }
+    interface SocketDataDTO {
+        socketId: string
+    }
     interface OutputProps {
         stdout?: string;
         stderr?: string;

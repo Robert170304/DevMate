@@ -7,7 +7,7 @@ export default async function middleware(req: NextRequest) {
     const homeURL = new URL("/", req.nextUrl.origin);
     const appURL = new URL("/workspace", req.nextUrl.origin);
 
-    const publicRoutes = ["/", "/about-devmate"];
+    const publicRoutes = ["/", "/about-devmate", "/share"];
     const protectedRoutes = ["/workspace", "/live-preview"];
     const protectedApiRoutes = ["/api/runcode"]; // Define protected API routes
 
@@ -16,6 +16,11 @@ export default async function middleware(req: NextRequest) {
 
     // Check if the request is for a protected API route
     const isProtectedApiRoute = protectedApiRoutes.some((route) => url.startsWith(route));
+
+    // Check if the request is for a protected dynamic route (e.g., /live-preview/[id])
+    const isProtectedDynamicRoute = protectedRoutes.some((route) =>
+        url.startsWith(route)
+    );
 
     // Handle logged-in user redirection
     if (sessionToken) {
@@ -26,7 +31,7 @@ export default async function middleware(req: NextRequest) {
         // Allow user to stay on protected routes without unnecessary redirection
     } else {
         // Redirect unauthenticated users from protected routes to home
-        if (!isApiRoute && protectedRoutes.includes(url)) {
+        if (!isApiRoute && protectedRoutes.includes(url) || isProtectedDynamicRoute) {
             return NextResponse.redirect(homeURL);
         }
         if (isProtectedApiRoute) {

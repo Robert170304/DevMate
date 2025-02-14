@@ -46,7 +46,6 @@ const DevMateTerminal = () => {
     });
 
     function handleContextMenu(event: React.MouseEvent) {
-        console.log("🚀 ~ handleContextMenu ~ event:", event)
         show({
             event,
         })

@@ -11,10 +11,12 @@ import { collectFileIds, findFileOrFolderById, findFileOrFolderByNameInFolder, g
 import { useContextMenu } from 'react-contexify';
 import ContextMenu from '../ContextMenu/ContextMenu';
 import ExplorerFileGroup from '../ExplorerFileGroup/ExplorerFileGroup';
+import { useSocket } from '@devmate/app/context/SocketProvider';
 
 const { setCurrentFileData, setAllOpenFiles, setFileTreeData } = appActions;
 const ROOT_EXPLORER_MENU_ID = "root_context_menu"
 const Explorer: React.FC = () => {
+    const socket = useSocket()
     const rootContextMenuItems = [
         {
             id: 'new_file',
@@ -37,11 +39,14 @@ const Explorer: React.FC = () => {
                 dispatch(setFileTreeData([]))
                 dispatch(setAllOpenFiles([]))
                 dispatch(setCurrentFileData({ name: '', path: '', content: "", id: '', parentId: "" }));
-
+                if (fileTreeData && activeCollabSession?.sessionId) {
+                    socket?.emit("update-fileTree", []);
+                }
             }
         },
     ]
     const explorerContextMenu = useContextMenu({ id: ROOT_EXPLORER_MENU_ID });
+    const activeCollabSession = useSelector((state: RootState) => state.app.activeCollabSession);
     const dispatch = useDispatch();
     const fileTreeData = useSelector((state: RootState) => state.app.fileTreeData);
     const allOpenFiles = useSelector((state: RootState) => state.app.allOpenFiles);
@@ -58,6 +63,26 @@ const Explorer: React.FC = () => {
         parentId: string;
         type: string;
     }>({ parentId: "", type: "" }); // Tracks the item being created
+
+    useEffect(() => {
+        if (!socket) return;
+
+        // 🟢 Receive fileTreeData when joining session
+        socket.on("load-fileTreeData", (fileTree: ExplorerItem[]) => {
+
+            dispatch(setFileTreeData(fileTree)); // Update Redux
+            const newOpenFiles = allOpenFiles.filter(file => findFileOrFolderById(fileTree, file.id) !== null)
+            dispatch(setAllOpenFiles(newOpenFiles));
+            const isFileExist = findFileOrFolderById(fileTree, currentFileData.id)
+            if (!isFileExist) {
+                handleFileSwitch(currentFileData.id, newOpenFiles)
+            }
+        });
+
+        return () => {
+            socket.off("load-fileTreeData");
+        };
+    }, [socket, currentFileData]);
 
     useEffect(() => {
         if (fileTreeData) {
@@ -158,10 +183,16 @@ const Explorer: React.FC = () => {
         setCreatingItem({ parentId: "", type: "" });
         setNewFileFolderName("");
         setIsDuplicateDetected({ detected: false, duplicateName: "" })
+
+        if (fileTreeData && activeCollabSession?.sessionId) {
+            socket?.emit("update-fileTree", updatedData);
+        }
     };
 
     const updateFileOrFolderName = (parentId: string, itemId: string, newName: string) => {
         // Validate: Check for duplicate names in the same folder
+        const getFile = findFileOrFolderById(fileTreeData || [], itemId)
+        if (getFile?.name === newName) return;
         const isDuplicate = findFileOrFolderByNameInFolder(explorerData, parentId, newName)
         if (isDuplicate) {
             setIsDuplicateDetected({ detected: true, duplicateName: newName })
@@ -190,8 +221,14 @@ const Explorer: React.FC = () => {
                 }
                 return item;
             });
+
         if (fileTreeData) {
-            dispatch(setFileTreeData(updateNameAndPathRecursively(fileTreeData)))
+            const updatedFileTreeData = updateNameAndPathRecursively(fileTreeData)
+            dispatch(setFileTreeData(updatedFileTreeData))
+
+            if (activeCollabSession?.sessionId) {
+                socket?.emit("update-fileTree", updatedFileTreeData);
+            }
         }
 
         // Update All Open Files
@@ -266,6 +303,10 @@ const Explorer: React.FC = () => {
             // If the current file is deleted, switch to another file
             if (currentFileData && fileIdsToDelete.includes(currentFileData.id)) {
                 handleFileSwitch(currentFileData.id, updatedOpenFiles);
+            }
+
+            if (activeCollabSession?.sessionId) {
+                socket?.emit("update-fileTree", updatedData);
             }
         }
         setLastClickedId("root");

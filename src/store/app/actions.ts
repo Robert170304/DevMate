@@ -6,7 +6,17 @@ const appActions = {
   SET_IS_TERMINAL_OPEN: "SET_IS_TERMINAL_OPEN",
   SET_OUTPUT_PANEL_CONTENT: "SET_OUTPUT_PANEL_CONTENT",
   SET_AICHATBOX_OPEN: "SET_AICHATBOX_OPEN",
+  SET_ACTIVE_COLLAB_SESSION: "SET_ACTIVE_COLLAB_SESSION",
+  SET_SOCKET_DATA: "SET_SOCKET_DATA",
 
+  setSocketData: (data: SocketDataDTO) => ({
+    type: appActions.SET_SOCKET_DATA,
+    data,
+  }),
+  setActiveCollabSession: (data: ActiveCollabSessionDTO) => ({
+    type: appActions.SET_ACTIVE_COLLAB_SESSION,
+    data,
+  }),
   setIsAIChatBox: (data: AIChatBoxDTO) => ({
     type: appActions.SET_AICHATBOX_OPEN,
     data,

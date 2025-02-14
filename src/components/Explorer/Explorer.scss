@@ -26,6 +26,9 @@
   .explorer-navbar__scrollarea {
     height: 90vh;
     margin: 10px;
+    .mantine-ScrollArea-viewport {
+      padding-bottom: 50px;
+    }
   }
 
   .footer {

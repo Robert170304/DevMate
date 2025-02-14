@@ -23,7 +23,7 @@ export async function POST(req: Request) {
           content: `Given the following incomplete ${language} code, suggest only the next few logical lines without additional explanations. Ensure the syntax is valid and aligns with best practices.\n\n${code}`,
         }
       ],
-      model: "gpt-4o-mini",
+      model: "gpt-4o",
       temperature: 0.5, // Lower temp for more predictable results
       max_tokens: 4256, // Reduce token usage for faster responses
       top_p: 0.9, // Slightly controlled randomness

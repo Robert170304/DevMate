@@ -1,19 +1,19 @@
 import { ActionIcon, Box, Flex, Image, Tabs, Title, Tooltip } from '@mantine/core';
 import classes from "./EditorViewTabs.module.scss"
 import EditorComponent from '../EditorComponent/EditorComponent';
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import type { RootState } from '@devmate/store/store';
 import { useDispatch, useSelector } from 'react-redux';
 import { isEmpty } from 'lodash';
 import FileIcon from '../FileIcon/FileIcon';
 import appActions from '@devmate/store/app/actions';
 import { IconPlayerPlayFilled, IconX } from '@tabler/icons-react';
-import "./EditorView.scss"
-import { languageMap } from '@devmate/app/utils/utility';
+import "./EditorView.scss";
 import FilePathBreadCrumb from '../FilePathBreadCrumb/FilePathBreadCrumb';
-import { generateUUID, showNotification } from '@devmate/app/utils/commonFunctions';
+import { generateUUID, getLanguageFromExtension, showNotification } from '@devmate/app/utils/commonFunctions';
 import { apiHelper } from '@devmate/app/helpers/apiHelper';
 import GlobalOptionsMenu from '../GlobalOptionsMenu/GlobalOptionsMenu';
+import { useSocket } from '@devmate/app/context/SocketProvider';
 
 const {
     setCurrentFileData,
@@ -22,11 +22,15 @@ const {
     setIsTerminalOpen,
     setOutputPanelContent,
     setIsAIChatBox,
+    setActiveCollabSession
 } = appActions;
 
 const EditorView = () => {
     const dispatch = useDispatch();
+    const socket = useSocket()
+    const isUpdatingRef = useRef(false); // Prevents looping updates
     const AIChatBox = useSelector((state: RootState) => state.app.isAIChatBoxOpen);
+    const activeCollabSession = useSelector((state: RootState) => state.app.activeCollabSession);
     const currentFileData = useSelector((state: RootState) => state.app.currentFileData);
     const fileTreeData = useSelector((state: RootState) => state.app.fileTreeData);
     const allOpenFiles = useSelector((state: RootState) => state.app.allOpenFiles);
@@ -61,6 +65,10 @@ const EditorView = () => {
             action: () => {
                 dispatch(setIsTerminalOpen(false));
                 dispatch(setIsAIChatBox({ ...AIChatBox, open: true }))
+                dispatch(setActiveCollabSession({
+                    ...activeCollabSession,
+                    isChatBoxOpen: false
+                }))
             },
             isGroupEnd: true
         },
@@ -75,11 +83,6 @@ const EditorView = () => {
         },
     ]
 
-    const getLanguageFromExtension = (filePath: string) => {
-        const extension = filePath.split(".").pop();
-        const fileExtension = languageMap[extension ?? ""] || "plaintext";
-        return fileExtension
-    };
 
     const updateFileTreeContent = (tree: ExplorerItem[], fileId: string, newContent: string): ExplorerItem[] => {
         return tree.map((node) => {
@@ -111,9 +114,38 @@ const EditorView = () => {
             const updatedFileTreeData = updateFileTreeContent(fileTreeData, currentFileData.id, value ?? "");
             dispatch(setFileTreeData(updatedFileTreeData));
         }
+
+        if (isUpdatingRef.current) {
+            return; // Skip emitting if it's an update from the server
+        }
+
+        socket?.emit("send-code-update", updatedCurrentFile);
     };
+    useEffect(() => {
+        // Listen for code updates from other users
+        socket?.on("receive-code-update", (updatedFile) => { // 🔥 Different event for receiving
+            isUpdatingRef.current = true;  // ✅ Set flag to prevent re-emitting
+            if (currentFileData.id && currentFileData.id === updatedFile.id) {
+                // update current file content
+                dispatch(setCurrentFileData({ ...currentFileData, content: updatedFile.content }));
+            }
+            // update content in allOpenFiles arrays file
+            const updatedOpenFiles = allOpenFiles.map((file) =>
+                file.id === updatedFile.id ? { ...file, content: updatedFile.content } : file
+            );
+            dispatch(setAllOpenFiles(updatedOpenFiles));
 
+            // update content in fileTreeData array's file
+            if (fileTreeData) {
+                const updatedFileTreeData = updateFileTreeContent(fileTreeData, updatedFile.id, updatedFile.content);
+                dispatch(setFileTreeData(updatedFileTreeData));
+            }
 
+            setTimeout(() => { isUpdatingRef.current = false; }, 500); // ✅ Reset flag after update
+        });
+        return () => { socket?.off("receive-code-update"); }; // ✅ Cleanup listener
+
+    }, [socket, currentFileData, allOpenFiles, fileTreeData]);
 
     const handleFileClose = (e: React.MouseEvent<HTMLDivElement>, fileId: string) => {
         e.stopPropagation();
@@ -169,7 +201,6 @@ const EditorView = () => {
                     value={currentFileData.id}
                     classNames={classes}
                     onChange={(value) => {
-                        console.log("🚀 ~ value:", value)
                         const selectedFile = allOpenFiles.find((file) => file.id === value);
                         if (selectedFile) {
                             dispatch(setCurrentFileData(selectedFile));
@@ -199,7 +230,7 @@ const EditorView = () => {
                                                 handleFileClose(e, file.id);
                                             }}
                                             aria-label={`Close ${file.name}`}
-                                            className={`close-tab-button ${hoverTabId === file.id ? "close-tab-button__visible" : ""}`}
+                                            className={`close-tab-button ${hoverTabId === file.id || currentFileData.id === file.id ? "close-tab-button__visible" : ""}`}
                                         >
                                             <IconX
                                                 color="gray"

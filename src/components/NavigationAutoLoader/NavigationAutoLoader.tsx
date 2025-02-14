@@ -8,8 +8,6 @@ export default function NavigationAutoLoader() {
     const { showLoader, hideLoader } = useScreenLoader();
     const pathname = usePathname();
 
-    console.log("🚀 ~ NavigationAutoLoader ~ pathname:", pathname)
-
     useEffect(() => {
         showLoader();
         const timer = setTimeout(() => hideLoader(), 1000); // Simulate loader delay

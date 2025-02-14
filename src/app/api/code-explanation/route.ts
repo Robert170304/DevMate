@@ -15,7 +15,7 @@ export async function POST(req: Request) {
                 { role: "system", content: `You are an AI that explains ${language} code in a simple and concise manner.` },
                 { role: "user", content: `Explain the following ${language} code:\n\n${code}` },
             ],
-            model: "gpt-4o-mini",
+            model: "gpt-4o",
             temperature: 0.7,
             max_tokens: 512,
         });

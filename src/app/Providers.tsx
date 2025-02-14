@@ -10,6 +10,7 @@ import { Notifications } from '@mantine/notifications';
 import FullScreenLoader from "@devmate/components/LoaderFullScreen/LoaderFullScreen";
 import { persistor, store } from "@devmate/store/store";
 import { OptionsMenuProvider } from "./context/OptionsMenuContext";
+import SocketProvider from "./context/SocketProvider";
 
 interface ProvidersProps {
     children: React.ReactNode;
@@ -35,7 +36,9 @@ export default function Providers({ children, session }: Readonly<ProvidersProps
                                 }
                                 persistor={persistor}
                             >
-                                {children}
+                                <SocketProvider>
+                                    {children}
+                                </SocketProvider>
                             </PersistGate>
                         </ReduxProvider>
                     </ScreenLoaderProvider>

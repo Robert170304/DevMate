@@ -1,0 +1,35 @@
+@use "../../app/variables.scss" as *;
+
+.workspace-footer_container {
+  color: #fff;
+  position: relative;
+  top: -1px;
+  display: flex;
+  justify-content: space-between;
+  button {
+    color: #fff;
+    --button-hover: none !important;
+    --button-bg: transparent !important;
+    border: none;
+    border-radius: 0px;
+    font-size: 13px;
+    &:hover {
+      color: #fff;
+      background-color: $light-orange;
+    }
+  }
+}
+
+.footer-left_section,
+.footer-right_section {
+  display: flex;
+  align-items: center;
+  height: 22px;
+}
+
+.user-info-container {
+  display: flex;
+  align-items: self-end;
+  font-size: 13px;
+  gap: 5px;
+}

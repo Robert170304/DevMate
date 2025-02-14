@@ -10,10 +10,14 @@ const initialState: State = {
   outputPanelContent: [],
   isAIChatBoxOpen: {
     open: false, messages: [], isExplainCode: false, explainCodeContent: "", isModifyCode: false, modifyCodeContent: ""
-  }
+  },
+  activeCollabSession: { sessionId: "", users: [], managerId: "", chatMsgs: [], isChatBoxOpen: false },
+  socketData: { socketId: "" }
 };
 
 interface State {
+  socketData: SocketDataDTO;
+  activeCollabSession: ActiveCollabSessionDTO;
   isAIChatBoxOpen: AIChatBoxDTO;
   userData: UserResponseDTO;
   currentFileData: FileItemDTO;
@@ -66,6 +70,16 @@ const appReducer = (state: State = initialState, action: Action): State => {
       return {
         ...state,
         isAIChatBoxOpen: action.data as AIChatBoxDTO,
+      };
+    case actions.SET_ACTIVE_COLLAB_SESSION:
+      return {
+        ...state,
+        activeCollabSession: action.data as ActiveCollabSessionDTO,
+      };
+    case actions.SET_SOCKET_DATA:
+      return {
+        ...state,
+        socketData: action.data as SocketDataDTO,
       };
 
     default:
