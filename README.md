@@ -22,7 +22,7 @@ DevMate is an advanced, AI-integrated code editor that allows real-time collabor
 - **🤖 AI-Powered Code Assistance**: Get instant code suggestions, improvements, and explanations using OpenAI's GPT-4o model.
 - **👥 Real-time Collaboration**: Work on the same codebase with multiple users simultaneously.
 - **📂 Project & File Management**: Create, organize, and manage files effortlessly within the workspace.
-- **🖥️ Integrated Terminal**: Execute commands in a built-in terminal, enhancing workflow efficiency.
+- **🖥️ Integrated Terminal**: Execute code in a built-in terminal, enhancing workflow efficiency.
 - **🔗 Shareable Code Links**: Generate and share code snippets with a unique link.
 - **📌 AI Chatbox**: Communicate with AI to debug and enhance your code without leaving the editor.
 - **🌍 Web-Based Development**: No setup required—start coding instantly in your browser.
