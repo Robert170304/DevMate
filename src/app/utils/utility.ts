@@ -1,4 +1,4 @@
-import { IconGitBranch, IconRobot, IconUsers } from '@tabler/icons-react';
+import { IconCode, IconRobot, IconUsers } from '@tabler/icons-react';
 
 export const emptyFileObj: FileItemDTO = { path: "", content: "", id: "", name: "", parentId: "" }
 
@@ -9,8 +9,7 @@ export const privateRoutes = [
 ]
 
 export const footerLinks = [
-  { link: '#', label: 'Privacy' },
-  { link: '#', label: 'Terms of Use' },
+  { link: '/about-devmate', label: 'Learn More' },
 ];
 
 
@@ -32,14 +31,14 @@ export const featuresData = [
   {
     title: 'Real-time Collaboration',
     description:
-      'Collaborate with your team in real-time. Share code, track changes, and communicate seamlessly.',
+      'Collaborate with your team in real-time. Share code, and communicate seamlessly.',
     icon: IconUsers,
   },
   {
-    title: 'Version Control',
+    title: 'Multi-Language Support',
     description:
-      'Integrate with version control systems. Manage your codebase, track changes, and collaborate efficiently.',
-    icon: IconGitBranch, // Change this to a more relevant icon
+      'Run and test code in multiple programming languages. Get instant feedback on your code execution.',
+    icon: IconCode, // Updated to a relevant icon
   },
 ];
 

@@ -1,6 +1,6 @@
 "use client"
 import React from 'react';
-import { Title, Text, Group, List, ThemeIcon, Button, Box } from '@mantine/core';
+import { Title, Text, List, ThemeIcon, Box } from '@mantine/core';
 import { IconCheck } from '@tabler/icons-react';
 
 export default function About() {
@@ -48,9 +48,6 @@ export default function About() {
                 <List.Item>
                     <strong>Customizable Workspace:</strong> Tailor your development environment to match your workflow. With DevMate, flexibility and personalization go hand-in-hand.
                 </List.Item>
-                <List.Item>
-                    <strong>Powerful Integrations:</strong> Connect with your favorite tools and platforms to manage projects, repositories, and more — all within one workspace.
-                </List.Item>
             </List>
 
             <Title order={2} mt="xl">
@@ -59,15 +56,6 @@ export default function About() {
             <Text mt="sm">
                 Save hours with intelligent suggestions, connect and collaborate effortlessly, innovate with cutting-edge AI, and enjoy a platform accessible to developers of all levels.
             </Text>
-
-            <Group mt="xl" align="center">
-                <Button variant="filled" radius="xl" size="md">
-                    Get Started
-                </Button>
-                <Button variant="outline" radius="xl" size="md">
-                    Learn More
-                </Button>
-            </Group>
         </Box>
     );
 };

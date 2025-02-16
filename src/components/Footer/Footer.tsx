@@ -1,23 +1,28 @@
-import { IconBrandInstagram, IconBrandTwitter, IconBrandYoutube } from '@tabler/icons-react';
-import { ActionIcon, Anchor, Group, Image } from '@mantine/core';
+import { IconBrandInstagram, IconBrandLinkedin } from '@tabler/icons-react';
+import { ActionIcon, Group, Image, Text } from '@mantine/core';
 import './Footer.scss'
 import { footerLinks } from '@devmate/app/utils/utility';
 import useWindowSize from '@devmate/app/hooks/useWindowSizes';
+import Link from 'next/link';
 
 
 const Footer: React.FC = () => {
     const { width } = useWindowSize()
     const items = footerLinks.map((link) => (
-        <Anchor
-            c="dimmed"
+        <Link
             key={link.label}
             href={link.link}
-            lh={1}
-            // onClick={(event) => event.preventDefault()}
-            size="sm"
+            className='footer-link'
         >
-            {link.label}
-        </Anchor>
+            <Text
+                c="dimmed"
+                key={link.label}
+                lh={1}
+                size="sm"
+            >
+                {link.label}
+            </Text>
+        </Link>
     ));
 
     return (
@@ -28,13 +33,14 @@ const Footer: React.FC = () => {
                 <Group className="footer-links">{items}</Group>
 
                 <Group gap="xs" justify="flex-end" wrap="nowrap">
-                    <ActionIcon size="lg" variant="default" radius="xl">
-                        <IconBrandTwitter size={18} stroke={1.5} />
+                    <ActionIcon size="lg" variant="default" radius="xl"
+                        onClick={() => window.open("https://www.linkedin.com/in/robert-macwan-bb0b23192", "_blank")}
+                    >
+                        <IconBrandLinkedin size={18} stroke={1.5} />
                     </ActionIcon>
-                    <ActionIcon size="lg" variant="default" radius="xl">
-                        <IconBrandYoutube size={18} stroke={1.5} />
-                    </ActionIcon>
-                    <ActionIcon size="lg" variant="default" radius="xl">
+                    <ActionIcon size="lg" variant="default" radius="xl"
+                        onClick={() => window.open("https://www.instagram.com/robert.macvvan/", "_blank")}
+                    >
                         <IconBrandInstagram size={18} stroke={1.5} />
                     </ActionIcon>
                 </Group>

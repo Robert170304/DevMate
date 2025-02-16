@@ -1,4 +1,4 @@
-import { Box, Button, Flex, Menu, Text } from '@mantine/core'
+import { Box, Button, Flex, Menu, Text, Tooltip } from '@mantine/core'
 import React, { useState } from 'react'
 import "./WorkspaceFooter.scss"
 import { copyToClipBoard, generateUUID, getLanguageFromExtension, showNotification, updateFileTreeContent } from '@devmate/app/utils/commonFunctions';
@@ -8,10 +8,19 @@ import type { RootState } from '@devmate/store/store';
 import appActions from '@devmate/store/app/actions';
 import { useSocket } from '@devmate/app/context/SocketProvider';
 import Image from 'next/image';
-import { IconMessage, IconPlaystationCircle, IconUserPlus } from '@tabler/icons-react';
+import { IconMessage, IconPlaystationCircle, IconUserPlus, IconLogout } from '@tabler/icons-react';
 import { apiHelper } from '@devmate/app/helpers/apiHelper';
+import { signOut } from 'next-auth/react';
 
-const { setActiveCollabSession, setIsAIChatBox, setIsTerminalOpen, setCurrentFileData, setAllOpenFiles, setFileTreeData } = appActions
+const {
+    setUserData,
+    setActiveCollabSession,
+    setIsAIChatBox,
+    setIsTerminalOpen,
+    setCurrentFileData,
+    setAllOpenFiles,
+    setFileTreeData
+} = appActions
 
 const WorkspaceFooter = () => {
     const socket = useSocket()
@@ -35,7 +44,14 @@ const WorkspaceFooter = () => {
     const footerRightActions = [
         { label: "Share Code Link", id: "share-code-link", action: () => handleAction("share-code-link") },
         { label: "Output Panel", id: "output-panel", action: () => handleAction("output-panel") },
-        { label: "Invite to Collaborate", id: "invite-to-collaborate", action: () => handleAction("invite-to-collaborate") }
+        { label: "Invite to Collaborate", id: "invite-to-collaborate", action: () => handleAction("invite-to-collaborate") },
+        {
+            label: <Tooltip label="Logout" withArrow>
+                <IconLogout size={18} />
+            </Tooltip>,
+            id: "logout-workspace",
+            action: () => handleAction("logout-workspace")
+        }
     ]
 
     const improveCode = async () => {
@@ -94,6 +110,9 @@ const WorkspaceFooter = () => {
             case "invite-to-collaborate":
                 createInviteeSession()
                 break;
+            case "logout-workspace":
+                handleSignOut()
+                break;
             default:
                 break;
         }
@@ -111,6 +130,14 @@ const WorkspaceFooter = () => {
         }, 200)
     };
 
+    const handleSignOut = () => {
+        setActionLoaderName("logout-workspace")
+        signOut()
+        dispatch(setUserData({ id: "", name: "", email: "", image: "" }))
+        setTimeout(() => {
+            setActionLoaderName("")
+        }, 200)
+    };
 
     return (
         <Box p="0px 10px" h="22px" className='workspace-footer_container' >

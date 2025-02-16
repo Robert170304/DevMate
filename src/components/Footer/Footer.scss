@@ -30,4 +30,8 @@
     margin-top: var(--mantine-spacing-lg);
     margin-bottom: var(--mantine-spacing-sm);
   }
+  .footer-link {
+    text-decoration: underline;
+    text-decoration-color: var(--mantine-color-dimmed);
+  }
 }

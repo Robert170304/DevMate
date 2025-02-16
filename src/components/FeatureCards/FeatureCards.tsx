@@ -37,7 +37,7 @@ const FeatureCards: React.FC = () => {
             </Title>
 
             <Text c="dimmed" className="featuresSectionDescription" ta="center" mt="md">
-                DevMate offers a suite of powerful tools to streamline your development process, from AI assistance to real-time collaboration and seamless version control.
+                DevMate offers a suite of powerful tools to streamline your development process, from AI assistance to real-time collaboration.
             </Text>
 
             <SimpleGrid cols={{ base: 1, md: 3 }} spacing="xl" mt={50}>

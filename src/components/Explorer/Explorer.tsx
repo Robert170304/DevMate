@@ -450,7 +450,7 @@ const Explorer: React.FC = () => {
                                         onChange={onNameInputChange}
                                         autoFocus
                                         className={`creating-file-input ${isDuplicateDetected.detected ? "creating-file-input-error" : ""}`}
-                                        placeholder={isEmpty(explorerData) ? `Enter project name` : `Enter ${creatingItem.type} name`}
+                                        placeholder={`Enter ${creatingItem.type} name`}
                                         onBlur={onNameInputBlur}
                                         onKeyDown={(e) => handleNameInput(e, null, creatingItem.type === 'file')}
                                     />
