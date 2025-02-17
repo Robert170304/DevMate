@@ -90,13 +90,17 @@ const WorkspaceFooter = () => {
             case "devmate-ai":
                 dispatch(setActiveCollabSession({ ...activeCollabSession, isChatBoxOpen: false }))
                 dispatch(setIsAIChatBox({ ...AIChatBox, open: true }))
+                dispatch(setIsTerminalOpen(false));
                 break;
             case "improve-code": {
                 improveCode()
                 break;
             }
             case "share-code-link": {
-                const encodedCode = encodeURIComponent(btoa(decodeURIComponent(encodeURIComponent(currentFileData?.content ?? "")))); // Encode safely
+                const utf8ToBase64 = (str: string) => {
+                    return btoa(unescape(encodeURIComponent(str))); // Ensures Unicode is handled
+                };
+                const encodedCode = encodeURIComponent(utf8ToBase64(currentFileData?.content ?? ""));
                 const encodedLang = encodeURIComponent(getLanguageFromExtension(currentFileData?.name || " "));
                 const shareableLink = `${window.location.origin}/share?code=${encodedCode}&lang=${encodedLang}`;
                 copyToClipBoard(shareableLink, true, "Share link copied!");

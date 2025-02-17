@@ -245,8 +245,6 @@ const EditorView = () => {
                             )
                         })}
                     </Tabs.List>
-                    {/* {allOpenFiles.map((file) => {
-                        return ( */}
                     <Tabs.Panel
                         keepMounted={false}
                         value={currentFileData.id}
@@ -258,8 +256,6 @@ const EditorView = () => {
                             onContentChange={handleContentChange}
                         />
                     </Tabs.Panel>
-                    {/* ) */}
-                    {/* })} */}
                 </Tabs>
                 : <Flex flex={1} justify="center" align="center" direction="column" >
                     <div>
