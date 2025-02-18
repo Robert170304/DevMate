@@ -55,6 +55,10 @@ const WorkspaceFooter = () => {
     ]
 
     const improveCode = async () => {
+        if (!currentFileData.id) {
+            showNotification({ title: "Error", message: "No open file found!" })
+            return;
+        }
         setActionLoaderName("improve-code")
         try {
             const data = await apiHelper('/api/ai-improve-code', 'POST', {
@@ -97,13 +101,7 @@ const WorkspaceFooter = () => {
                 break;
             }
             case "share-code-link": {
-                const utf8ToBase64 = (str: string) => {
-                    return btoa(unescape(encodeURIComponent(str))); // Ensures Unicode is handled
-                };
-                const encodedCode = encodeURIComponent(utf8ToBase64(currentFileData?.content ?? ""));
-                const encodedLang = encodeURIComponent(getLanguageFromExtension(currentFileData?.name || " "));
-                const shareableLink = `${window.location.origin}/share?code=${encodedCode}&lang=${encodedLang}`;
-                copyToClipBoard(shareableLink, true, "Share link copied!");
+                shareCodeLink()
                 break;
             }
             case "output-panel":
@@ -142,6 +140,20 @@ const WorkspaceFooter = () => {
             setActionLoaderName("")
         }, 200)
     };
+
+    const shareCodeLink = async () => {
+        if (!currentFileData.id) {
+            showNotification({ title: "Error", message: "No open file found!" })
+            return;
+        }
+        const utf8ToBase64 = (str: string) => {
+            return btoa(unescape(encodeURIComponent(str))); // Ensures Unicode is handled
+        };
+        const encodedCode = encodeURIComponent(utf8ToBase64(currentFileData?.content ?? ""));
+        const encodedLang = encodeURIComponent(getLanguageFromExtension(currentFileData?.name || " "));
+        const shareableLink = `${window.location.origin}/share?code=${encodedCode}&lang=${encodedLang}`;
+        copyToClipBoard(shareableLink, true, "Share link copied!");
+    }
 
     return (
         <Box p="0px 10px" h="22px" className='workspace-footer_container' >

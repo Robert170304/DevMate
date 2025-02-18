@@ -8,7 +8,7 @@ export default async function middleware(req: NextRequest) {
     const appURL = new URL("/workspace", req.nextUrl.origin);
 
     const publicRoutes = ["/", "/about-devmate", "/share"];
-    const protectedRoutes = ["/workspace", "/live-preview"];
+    const protectedRoutes = ["/workspace", "/live-preview", "/share"];
     const protectedApiRoutes = ["/api/runcode"]; // Define protected API routes
 
     // Check if the request is an API call
@@ -25,7 +25,7 @@ export default async function middleware(req: NextRequest) {
     // Handle logged-in user redirection
     if (sessionToken) {
         // If logged in, prevent access to public routes and redirect to workspace
-        if (!isApiRoute && publicRoutes.includes(url)) {
+        if (!isApiRoute && publicRoutes.includes(url) && !protectedRoutes.includes(url)) {
             return NextResponse.redirect(appURL);
         }
         // Allow user to stay on protected routes without unnecessary redirection

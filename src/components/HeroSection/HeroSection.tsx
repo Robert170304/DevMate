@@ -1,6 +1,6 @@
 'use client'
 import { useEffect } from "react";
-import { BackgroundImage, Box, Center, Text, Title } from '@mantine/core';
+import { BackgroundImage, Box, Center, Flex, Text, Title } from '@mantine/core';
 import './HeroSection.scss';
 import FeatureCards from '../FeatureCards/FeatureCards';
 import { usePathname, useSearchParams } from "next/navigation";
@@ -40,70 +40,72 @@ const HeroSection: React.FC = () => {
                 </Group> */}
             </div>
             <FeatureCards />
-            <Title className="hero-section__title">
-                AI-Powered Code Modification
-            </Title>
-            <Box mah={1000} className='hero-box' >
-                <BackgroundImage
-                    src="./hero-background.webp"
-                    radius="sm"
-                    w="100%"
-                    h="100%"
-                >
-                    <Center p="xs" h="100%" className='hero-center' >
-                        <video className="hero-video" autoPlay loop muted width="100%" height="90%" >
-                            <source src="/ai-modify-code.mp4" type="video/mp4" />
-                            Your browser does not support the video tag.
-                        </video>
-                    </Center>
-                </BackgroundImage>
-            </Box>
-            <Title className="hero-section__title">
-                AI-Powered Code Improvement
-            </Title>
-            <Box mah={1000} className='hero-box' >
-                <BackgroundImage
-                    src="./hero-background.webp"
-                    radius="sm"
-                    w="100%"
-                    h="100%"
-                >
-                    <Center p="xs" h="100%" className='hero-center' >
-                        <video className="hero-video" autoPlay loop muted width="100%" height="90%" >
-                            <source src="/ai-improve-code.mp4" type="video/mp4" />
-                            Your browser does not support the video tag.
-                        </video>
-                    </Center>
-                </BackgroundImage>
-            </Box>
-            <Title className="hero-section__title">
-                Real-Time Code Collaboration in DevMate
-            </Title>
-            <Box mah={1000} className='hero-box' >
-                <BackgroundImage
-                    src="./hero-background.webp"
-                    radius="sm"
-                    w="100%"
-                    h="100%"
-                >
-                    <Center p="xs" h="100%" className='hero-center' >
-                        <video className="hero-video" autoPlay loop muted width="100%" height="90%" >
-                            <source src="/code-collabration.mp4" type="video/mp4" />
-                            Your browser does not support the video tag.
-                        </video>
-                    </Center>
-                </BackgroundImage>
-            </Box>
-            <Box mah={1000} className='hero-box' >
-                <Title className="hero-section__title">
-                    And So many more cool features...
+            <Flex direction="column" gap={25} >
+                <Title className="hero-section__title" mt="30px">
+                    AI-Powered Code Modification
                 </Title>
-                <Center h="100%" className='hero-center' >
-                    <Text c="dimmed" mt="md">
-                        Just Sign in with your GitHub account and get started
-                    </Text>
-                </Center>
-            </Box>
+                <Box mah={1000} className='hero-box' >
+                    <BackgroundImage
+                        src="./hero-background.webp"
+                        radius="sm"
+                        w="100%"
+                        h="100%"
+                    >
+                        <Center p="xs" h="100%" className='hero-center' >
+                            <video className="hero-video" autoPlay loop muted width="100%" height="90%" >
+                                <source src="/ai-modify-code.mp4" type="video/mp4" />
+                                Your browser does not support the video tag.
+                            </video>
+                        </Center>
+                    </BackgroundImage>
+                </Box>
+                <Title className="hero-section__title" mt="30px">
+                    AI-Powered Code Improvement
+                </Title>
+                <Box mah={1000} className='hero-box' >
+                    <BackgroundImage
+                        src="./hero-background.webp"
+                        radius="sm"
+                        w="100%"
+                        h="100%"
+                    >
+                        <Center p="xs" h="100%" className='hero-center' >
+                            <video className="hero-video" autoPlay loop muted width="100%" height="90%" >
+                                <source src="/ai-improve-code.mp4" type="video/mp4" />
+                                Your browser does not support the video tag.
+                            </video>
+                        </Center>
+                    </BackgroundImage>
+                </Box>
+                <Title className="hero-section__title" mt="30px">
+                    Real-Time Code Collaboration in DevMate
+                </Title>
+                <Box mah={1000} className='hero-box' >
+                    <BackgroundImage
+                        src="./hero-background.webp"
+                        radius="sm"
+                        w="100%"
+                        h="100%"
+                    >
+                        <Center p="xs" h="100%" className='hero-center' >
+                            <video className="hero-video" autoPlay loop muted width="100%" height="90%" >
+                                <source src="/code-collabration.mp4" type="video/mp4" />
+                                Your browser does not support the video tag.
+                            </video>
+                        </Center>
+                    </BackgroundImage>
+                </Box>
+                <Box mah={1000} className='hero-box' >
+                    <Title className="hero-section__title" mt="30px">
+                        And So many more cool features...
+                    </Title>
+                    <Center h="100%" className='hero-center' >
+                        <Text c="dimmed" mt="md">
+                            Just Sign in with your GitHub account and get started
+                        </Text>
+                    </Center>
+                </Box>
+            </Flex>
         </div>
     );
 }

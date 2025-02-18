@@ -1,5 +1,5 @@
 'use client';
-import { Burger, Button, Flex, Group, Image, Title, UnstyledButton } from '@mantine/core';
+import { Button, Flex, Group, Image, Title, UnstyledButton } from '@mantine/core';
 import './Header.scss';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -8,7 +8,6 @@ import { signIn, useSession } from 'next-auth/react';
 import { headerLinks } from '@devmate/app/utils/utility';
 import { useEffect, useState } from 'react';
 import useWindowSize from '@devmate/app/hooks/useWindowSizes';
-import { useDisclosure } from '@mantine/hooks';
 
 
 const Header: React.FC = () => {
@@ -16,7 +15,6 @@ const Header: React.FC = () => {
     const router = useRouter();
     const [scrolled, setScrolled] = useState(false);
     const { data: session } = useSession();
-    const [opened, { toggle }] = useDisclosure();
 
     useEffect(() => {
         const handleScroll = () => {
@@ -59,9 +57,6 @@ const Header: React.FC = () => {
                             <span>Login with GitHub</span>
                         </Button>
                     </Group>
-                )}
-                {!session && width <= 768 && (
-                    <Burger opened={opened} onClick={toggle} aria-label="Toggle navigation" />
                 )}
             </div>
         </header>
