@@ -19,26 +19,26 @@ DevMate is an advanced, AI-integrated code editor that allows real-time collabor
 
 ## ✨ Features
 
-- **🤖 AI-Powered Code Assistance**: Get instant code suggestions, improvements, and explanations using OpenAI's GPT-4o model.
-- **👥 Real-time Collaboration**: Work on the same codebase with multiple users simultaneously.
-- **📂 Project & File Management**: Create, organize, and manage files effortlessly within the workspace.
-- **🖥️ Integrated Terminal**: Execute code in a built-in terminal, enhancing workflow efficiency.
-- **🔗 Shareable Code Links**: Generate and share code snippets with a unique link.
-- **📌 AI Chatbox**: Communicate with AI to debug and enhance your code without leaving the editor.
-- **🌍 Web-Based Development**: No setup required—start coding instantly in your browser.
+- **AI-Powered Code Assistance**: Get instant code suggestions, improvements, and explanations using OpenAI's GPT-4o model.
+- **Real-time Collaboration**: Work on the same codebase with multiple users simultaneously.
+- **Project & File Management**: Create, organize, and manage files effortlessly within the workspace.
+- **Integrated Terminal**: Execute code in a built-in terminal, enhancing workflow efficiency.
+- **Shareable Code Links**: Generate and share code snippets with a unique link.
+- **AI Chatbox**: Communicate with AI to debug and enhance your code without leaving the editor.
+- **Web-Based Development**: No setup required—start coding instantly in your browser.
 
 ---
 
 ## 💻 Technologies Used
 
-- **Frontend**: Next.js (🛠️ App Router)
-- **Styling**: 🎨 Mantine UI, SCSS
-- **State Management**: 🗂️ Redux Toolkit
-- **AI Integration**: 🤖 OpenAI GPT-4o
-- **Real-Time Collaboration**: 🔌 Socket.io
-- **Code Editing**: 📝 Monaco Editor
-- **Languages & Libraries**: 💻 TypeScript, 📦 react-icons, tabler icons
-- **Deployment**: 🚀 Vercel & Render.com
+- **Frontend**: Next.js (App Router)
+- **Styling**: Mantine UI, SCSS
+- **State Management**: Redux Toolkit
+- **AI Integration**: OpenAI GPT-4o
+- **Real-Time Collaboration**: Socket.io
+- **Code Editing**: Monaco Editor
+- **Languages & Libraries**: TypeScript, react-icons, tabler icons
+- **Deployment**: Vercel & Render.com
 
 ---
 
@@ -74,23 +74,23 @@ DevMate is an advanced, AI-integrated code editor that allows real-time collabor
    ```bash
    yarn dev
    ```
-5. 🌐 Navigate to [http://localhost:3000](http://localhost:3000).
+5. Navigate to [http://localhost:3000](http://localhost:3000).
 
 ---
 
 ## 🚀 Usage
 
-1. **👨‍💻 Start Coding**: Open the workspace and begin writing code in your preferred language.
-2. **🤝 Collaborate in Real-Time**: Share your session with others and work on code together.
-3. **📩 AI-Powered Assistance**: Get intelligent code suggestions, explanations, and improvements.
-4. **🔗 Share Code**: Generate a shareable link to showcase your code.
+1. **Start Coding**: Open the workspace and begin writing code in your preferred language.
+2. **Collaborate in Real-Time**: Share your session with others and work on code together.
+3. **AI-Powered Assistance**: Get intelligent code suggestions, explanations, and improvements.
+4. **Share Code**: Generate a shareable link to showcase your code.
 
 ---
 
-## 🔗 API and Integrations
+## API and Integrations
 
-- **🤖 OpenAI GPT-4o**: AI-powered code improvements and assistance.
-- **🛜 Socket.io**: Real-time collaboration and live editing.
+- **OpenAI GPT-4o**: AI-powered code improvements and assistance.
+- **Socket.io**: Real-time collaboration and live editing.
 
 **⚠️ Important**: Use environment variables to secure API keys in `.env.local`.
 
