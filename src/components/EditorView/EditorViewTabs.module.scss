@@ -2,10 +2,7 @@
 
 .tab {
   position: relative;
-  border-right: 1px solid var(--mantine-color-gray-2);
-  @media (prefers-color-scheme: dark) {
-    border-right: 1px solid var(--mantine-color-dark-4);
-  }
+  border-right: 1px solid var(--mantine-color-dark-4);
 
   &:first-of-type {
     border-left: none;

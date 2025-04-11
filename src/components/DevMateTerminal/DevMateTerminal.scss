@@ -35,7 +35,7 @@
   .mantine-Tabs-root {
     height: inherit;
     .mantine-Tabs-panel {
-      overflow: scroll;
+      overflow-y: auto;
       height: inherit;
       height: 87%;
     }

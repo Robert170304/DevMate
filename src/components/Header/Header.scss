@@ -26,18 +26,10 @@
     padding: 8px 12px;
     border-radius: var(--mantine-radius-sm);
     text-decoration: none;
-    color: var(--mantine-color-gray-7);
+    color: var(--mantine-color-dark-0);
     font-size: var(--mantine-font-size-sm);
     font-weight: 500;
-    @media (prefers-color-scheme: dark) {
-      color: var(--mantine-color-dark-0);
-    }
-    // Pass the background color as an argument to the hover mixin
-    @include hover(var(--mantine-color-gray-0));
-
-    @media (prefers-color-scheme: dark) {
-      @include hover(var(--mantine-color-dark-6));
-    }
+    @include hover(var(--mantine-color-dark-6));
   }
 
   .app-name {

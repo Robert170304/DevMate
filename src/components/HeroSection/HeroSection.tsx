@@ -101,7 +101,7 @@ const HeroSection: React.FC = () => {
                     </Title>
                     <Center h="100%" className='hero-center' >
                         <Text c="dimmed" mt="md">
-                            Just Sign in with your GitHub account and get started
+                            Just sign in with your GitHub account and get started.
                         </Text>
                     </Center>
                 </Box>

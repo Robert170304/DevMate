@@ -10,12 +10,14 @@
   overflow: hidden; /* Prevents content from causing horizontal scroll */
 
   .explorer {
-    flex: 0 0 21.85%; /* Fixed to 20.85% width */
-    height: 100%; /* Fills height */
-    // overflow-y: auto; /* Scrollable if content exceeds height */
+    flex: 0 0 auto;
+    width: 350px;
+    max-width: 350px;
+    min-width: 200px;
+    height: 100%;
     border-right: 1px solid $gray-border-3;
     ::-webkit-scrollbar {
-      display: none; /* Hides scrollbar */
+      display: none;
     }
   }
 
@@ -29,15 +31,15 @@
   }
 
   .terminal-section {
-    background-color: $theme-color-1;
-    display: flex;
-    height: 40%; /* Fills height */
-    overflow: hidden; /* Prevents accidental horizontal scroll */
-    border: 1px solid $gray-border-3;
-    width: 78.2%;
+    left: 350px; // same as explorer width
+    right: 0;
+    height: 40%;
     position: absolute;
     bottom: 0;
-    right: 0;
+    background-color: $theme-color-1;
+    display: flex;
+    overflow: hidden;
+    border: 1px solid $gray-border-3;
   }
 
   .chat_view {
@@ -46,16 +48,15 @@
     border-left: 1px solid $gray-border-3;
   }
 
-  // .workspace-header {
-  //   border-bottom: 1px solid $gray-border-1;
-  // }
-
   .workspace-content {
     display: flex;
-    height: 97vh;
+    height: 97.6vh;
+    position: relative;
+    overflow: hidden;
   }
 
   .workspace-footer {
+    overflow: hidden;
     z-index: 11;
     bottom: 0px;
     position: absolute;

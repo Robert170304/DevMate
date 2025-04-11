@@ -1,20 +1,9 @@
 @use "../../app/variables.scss" as *;
 
-$background-color: var(--mantine-color-gray-0);
-$text-color1: var(--mantine-color-black);
-$text-color2: var(--mantine-color-gray-7);
-$border-color: var(--mantine-color-gray-3);
-
-@media (prefers-color-scheme: dark) {
-  $background-color: var(--mantine-color-dark-7);
-  $text-color1: var(--mantine-color-dark-0);
-  $text-color2: var(--mantine-color-gray-0);
-  $border-color: var(--mantine-color-dark-4);
-}
-
-// .files-group {
-//   margin: 10px 0;
-// }
+$background-color: var(--mantine-color-dark-7);
+$text-color1: var(--mantine-color-dark-0);
+$text-color2: var(--mantine-color-gray-0);
+$border-color: var(--mantine-color-dark-4);
 
 .folder-collapse___control {
   font-weight: 500;

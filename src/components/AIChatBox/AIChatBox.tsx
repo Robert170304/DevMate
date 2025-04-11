@@ -17,6 +17,7 @@ const MESSAGE_CONTEXT_MENU_ID = "message-context-menu"
 const AIChatBox: React.FC = () => {
     const AIChatBox = useSelector((state: RootState) => state.app.isAIChatBoxOpen);
     const dispatch = useDispatch()
+    const messageBoxRef = useRef<HTMLTextAreaElement>(null);
     const [chatMsgs, setChatMsgs] = useState<{ id: string; user: string; text: string; isCode?: boolean; isGenerating?: boolean }[]>(AIChatBox.messages);
     const [contextMenuMsgId, setContextMenuMsgId] = useState<string>("");
     const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -110,6 +111,7 @@ const AIChatBox: React.FC = () => {
             );
         } finally {
             setLoading(false);
+            setTimeout(() => { messageBoxRef?.current?.focus(); }, 100)
         }
     };
 
@@ -258,6 +260,7 @@ const AIChatBox: React.FC = () => {
             </Box>
             <Box className="chatbox-input-container">
                 <Textarea
+                    ref={messageBoxRef}
                     minRows={3} // Default height
                     maxRows={7} // Limits expansion (7 rows)
                     autosize

@@ -36,7 +36,7 @@ const Header: React.FC = () => {
         <header className={`main-site__header ${scrolled ? 'scrolled' : ''}`}>
             <div className="inner">
                 <Flex gap={{ base: 'sm', md: 0 }} justify="center" align="center" wrap="nowrap" rowGap={0} columnGap={0} >
-                    <Image mt="3px" h={35} w={35} src="/app-icon-non-bg.svg" alt="App Logo" className="app-logo" />
+                    <Image mt="3px" h={40} w={40} src="/app-icon-non-bg.svg" alt="App Logo" className="app-logo" />
                     <UnstyledButton onClick={() => !session && router.push('/')}>
                         <Title order={width <= 768 ? 3 : 2} className="app-name">DevMate</Title>
                     </UnstyledButton>
